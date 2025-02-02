@@ -22,6 +22,12 @@ export default function Login() {
             );
 
             // После успешного входа сервер отправит accessToken в куки
+            // Сохраняем accessToken в localStorage
+            const token = response.data.accessToken;
+            if (token) {
+                localStorage.setItem("token", token);
+            }
+
             await router.push("/forum/posts");
         } catch (err: any) {
             setError(err?.response?.data?.message || "Ошибка входа");

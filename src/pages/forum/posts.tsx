@@ -1,4 +1,10 @@
+"use client";
+
+import { Provider } from 'react-redux'; // Импортируйте Provider
+import { store } from '@/store/store'; // Ваш store
 import usePosts from "@/hooks/usePosts";
+import LogoutButton from "@/components/btn/LogoutButton";
+
 
 export default function Posts() {
     const { posts, loading, error } = usePosts();
@@ -7,8 +13,11 @@ export default function Posts() {
     if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
 
     return (
+        <Provider store={store}>
         <div>
             <h1>Forum</h1>
+            <LogoutButton/>
+
             <ul>
                 {posts.map((post) => (
                     <li key={post.id}>
@@ -18,5 +27,6 @@ export default function Posts() {
                 ))}
             </ul>
         </div>
+        </Provider>
     );
 }
