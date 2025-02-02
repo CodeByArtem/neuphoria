@@ -1,39 +1,61 @@
-"use client"
-import React, { useState } from "react";
-import { useRouter } from "next/router";
+import React, {useState} from "react";
+import {useRouter} from "next/router";
+import axios from "axios";
 
-const Login = () => {
+export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
 
-    const handleLogin = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSubmitting(true);
+        setError("");
 
-        // Здесь будет запрос к бекенду
-        const res = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-        });
+        try {
+            const response = await axios.post(
+                "https://nestbackgame.onrender.com/api/auth/login",
+                {email, password},
+                {withCredentials: true}
+            );
 
-        if (res.ok) {
-            await router.push("/dashboard"); // Редирект после успешного входа
-        } else {
-            console.log("Ошибка входа");
+            // После успешного входа сервер отправит accessToken в куки
+            await router.push("/forum/posts");
+        } catch (err: any) {
+            setError(err?.response?.data?.message || "Ошибка входа");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <div>
-            <h1>Вход</h1>
-            <form onSubmit={handleLogin}>
-                <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                <input type="password" placeholder="Пароль" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                <button type="submit">Войти</button>
-            </form>
-        </div>
-    );
-};
+        <form onSubmit={handleSubmit}>
+            <div>
+                <label>Email</label>
+                <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+            </div>
 
-export default Login;
+            <div>
+                <label>Password</label>
+                <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+            </div>
+
+            {error && <div style={{color: "red"}}>{error}</div>}
+            <button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Logging in..." : "Войти"}
+            </button>
+        </form>
+    );
+}
