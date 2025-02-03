@@ -6,7 +6,8 @@
     "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "sass-watch": "sass --watch ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -20,6 +21,7 @@
     "react-hook-form": "^7.54.2",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.4",
+    "sass": "^1.83.4",
     "yup": "^1.6.1"
   },
   "devDependencies": {
