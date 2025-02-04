@@ -1,0 +1,24 @@
+@use "helpers" as *;
+
+
+:root {
+  --color-light: #fff;
+  --color-red: #f00;
+  --color-dark: #000;
+  --color-yellow: #ff9b05;
+  --color-blue: #007bff;
+  --color-green: green;
+
+  --font-family-base: "Orbitron", sans-serif;
+  --font-size-accent: "Rubik Glitch", "Rubik Glitch Pop", sans-serif;
+
+
+  --container-width: #{rem(1600)};
+  --container-padding-x:  #{rem(16)};
+
+--transition-duration: 0.2s;
+
+  @include laptop {
+    --container-width: #{rem(1280)};
+  }
+}
