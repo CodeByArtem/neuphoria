@@ -1,0 +1,132 @@
+@use "../../style/helpers" as *;
+.header {
+  padding: rem(20) rem(40); // Использование rem для отступов
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  color: var(--color-blue);
+  display: flex;
+  align-items: center; // Вертикальное выравнивание элементов
+
+  // Логотип
+  .logo {
+    display: inline-flex;
+    font-size: fluid(36, 20); // Адаптивный размер для логотипа
+    font-weight: 700; // Утолщение для акцента
+    color: #333; // Основной цвет текста
+    text-transform: uppercase; // Все буквы заглавные для стиля
+    letter-spacing: 0.1rem; // Немного увеличиваем расстояние между буквами
+    transition: all 0.3s ease; // Плавный переход для анимации
+    &:hover {
+      transform: scale(1.1); // Увеличение логотипа на 10%
+      color: #e74c3c; // Цвет меняется на красный для акцента
+      text-shadow: 0 0 10px rgba(231, 76, 60, 0.7), 0 0 20px rgba(231, 76, 60, 0.7); // Красное свечение
+    }
+
+  }
+
+  // Навигация
+  .nav {
+    font-size: fluid(20, 24); // Адаптивный размер для навигации
+    @include flex-center;
+    gap: rem(70); // Отступы между пунктами
+    list-style: none; // Убираем стандартные маркеры
+    margin: auto; // Убираем отступы по умолчанию
+    padding: 0; // Убираем отступы по умолчанию
+  }
+
+  .nav > a {
+    position: relative;
+    color: rgba(6, 62, 246, 0.96);
+    text-decoration: none;
+    padding: rem(0.5) rem(1);
+    border-radius: rem(10); // Скругленные углы для кнопок
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px rgba(255, 255, 0, 0.6), 0 0 10px rgba(255, 255, 0, 0.6), 0 0 15px rgba(255, 255, 0, 0.6); // Легкое свечение желтым
+    font-weight: bold; // Жирный шрифт
+    letter-spacing: 0.05rem;
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 2px solid transparent; // Начальная прозрачная граница
+      border-radius: rem(10); // Скругленные углы
+      transition: all 0.3s ease, transform 0.5s ease; // Плавное вращение
+      transform: rotate(0deg); // Начальное положение без вращения
+    }
+
+
+
+    &:hover {
+      color: #ff6b6b;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.5), 0 0 25px rgba(255, 255, 255, 0.7);
+      transform: translateY(-2px);
+      &::after {
+        border-color: #ff6b6b; // Цвет обводки
+        transform: rotate(360deg); // Вращение на 360 градусов
+      }
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  // Регистрация
+  .registr {
+    font-size: fluid(16, 12); // Адаптивный размер для регистрации
+    display: flex;
+    gap: rem(15);
+    align-items: center;
+    justify-content: flex-end; // Сдвигаем в правую часть
+    margin-left: auto;
+  }
+
+  // Медиазапросы для адаптивности
+  @include mobile {
+    display: block;
+    padding: rem(15) rem(30); // Меньше отступов для мобильных
+    .nav {
+      font-size: fluid(16, 12); // Уменьшаем шрифт
+      gap: rem(15); // Меньше отступов
+    }
+    .registr {
+      font-size: fluid(14, 10); // Уменьшаем шрифт для мобильных
+      gap: rem(10); // Меньше отступов
+    }
+  }
+
+  @include tablet {
+    padding: rem(18) rem(35); // Средние отступы для планшетов
+    .nav {
+      font-size: fluid(17, 13); // Средний размер шрифта
+    }
+    .registr {
+      font-size: fluid(15, 11); // Средний размер шрифта для регистрации
+    }
+  }
+
+  @include laptop {
+    padding: rem(20) rem(40); // Стандартные отступы для ноутбуков
+    .nav {
+      font-size: fluid(18, 14); // Стандартный размер для навигации
+    }
+    .registr {
+      font-size: fluid(16, 12); // Стандартный размер для регистрации
+    }
+  }
+
+  // Для больших экранов
+  @include laptop-above {
+    padding: rem(25) rem(50); // Больше отступы для больших экранов
+    .nav {
+      font-size: fluid(20, 16); // Больше шрифт для навигации
+    }
+    .registr {
+      font-size: fluid(18, 14); // Больше шрифт для регистрации
+    }
+  }
+}

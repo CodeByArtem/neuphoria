@@ -7,7 +7,8 @@
   --color-blue: #007bff;
   --color-green: green;
   --font-family-base: "Orbitron", sans-serif;
-  --font-size-accent: "Rubik Glitch", "Rubik Glitch Pop", sans-serif;
+  --font-family-accent: "Rubik Glitch", sans-serif;
+  --font-family-innih: "Rubik Glitch Pop", sans-serif ;
   --container-width: 100rem;
   --container-padding-x: 1rem;
   --transition-duration: 0.2s;

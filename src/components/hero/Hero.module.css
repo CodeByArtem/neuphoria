@@ -1,0 +1,127 @@
+@charset "UTF-8";
+.heroSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.heroContainer {
+  color: white;
+  max-width: 37.5rem;
+  padding: 1.25rem;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  color: #0062ac;
+  background: linear-gradient(45deg, rgba(250, 255, 5, 0.94), #f7a8b8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-align: center;
+  font-family: var(--font-family-innih);
+  line-height: 1.4;
+  text-shadow: 2px 2px 8px rgba(250, 255, 5, 0.94), 0 0 25px rgba(47, 236, 11, 0.83);
+  margin-bottom: 1rem;
+}
+
+.heroText {
+  font-size: clamp(0.875rem, 0.7985893417rem + 0.3761755486vw, 1.25rem);
+  margin-bottom: 1.5rem;
+}
+
+.heroBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  margin: 0.625rem;
+}
+.heroBtn.google-play {
+  background-color: #14df14;
+  color: rgba(222, 246, 6, 0.96);
+  background-image: linear-gradient(to bottom, #3b8e3a, #10d616);
+}
+.heroBtn.app-store {
+  background-color: #1d1d1f;
+  color: white;
+  background-image: linear-gradient(to bottom, #1d1d1f, #282828);
+}
+.heroBtn:hover {
+  transform: translateY(-0.25rem);
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
+}
+.heroBtn:active {
+  transform: translateY(0.125rem);
+  box-shadow: none;
+}
+@media screen and (max-width: 48em) {
+  .heroBtn {
+    padding: 1rem 1.25rem;
+    font-size: 0.875rem;
+  }
+}
+
+.heroBtn .icon {
+  margin-right: 0.625rem;
+  font-size: 1.25rem;
+  transition: transform 0.3s ease;
+}
+
+.heroBtn:hover .icon {
+  transform: rotate(360deg);
+}
+
+.heroBtn.google-play:hover {
+  background-color: #2e7d32;
+  background-image: linear-gradient(to bottom, #2e7d32, #388e3c);
+}
+
+.heroBtn.app-store:hover {
+  background-color: #333;
+  background-image: linear-gradient(to bottom, #333, #282828);
+}
+
+.icon {
+  color: #0ecd15;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.iconapp {
+  color: #111711;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+/* Адаптивность */
+@media (width <= 63.99875rem) {
+  .heroTitle {
+    font-size: clamp(1.375rem, 1.1457680251rem + 1.1285266458vw, 2.5rem);
+  }
+  .heroText {
+    font-size: clamp(0.875rem, 0.8240595611rem + 0.2507836991vw, 1.125rem);
+  }
+}
+@media (width <= 47.99875rem) {
+  .heroContainer {
+    padding: 0.625rem;
+  }
+  .heroTitle {
+    font-size: clamp(1.25rem, 1.0462382445rem + 1.0031347962vw, 2.25rem);
+  }
+  .heroText {
+    font-size: clamp(0.75rem, 0.6990595611rem + 0.2507836991vw, 1rem);
+  }
+}
+
+/*# sourceMappingURL=Hero.module.css.map */

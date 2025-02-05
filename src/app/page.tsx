@@ -1,8 +1,13 @@
+import "../style/globals.scss";
 
+import Header from "@/components/heder/Header";
+ import Hero from "@/components/hero/Hero";
 
-export default function Home() {
+ export default function Page() {
   return (
-      <h1>Hello Artem</h1>
-
+      <div className="min-h-screen bg-[url('/images/herofon.webp')] bg-cover bg-right -z-10">
+     <Header/> {/* Используем компонент здесь */}
+        <Hero/>
+      </div>
   );
 }
