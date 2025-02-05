@@ -1,11 +1,9 @@
 @use "../../style/helpers" as *;
 .header {
-  padding: rem(20) rem(40); // Использование rem для отступов
-  top: 0;
-  z-index: 1000;
-  color: var(--color-blue);
   display: flex;
-  align-items: center; // Вертикальное выравнивание элементов
+  justify-content: space-between; /* Размещаем элементы по обеим сторонам */
+  align-items: center; /* Выравниваем элементы по центру по вертикали */
+  padding: rem(20) rem(40);
 
   // Логотип
   .logo {
@@ -77,11 +75,12 @@
   // Регистрация
   .registr {
     font-size: fluid(16, 12); // Адаптивный размер для регистрации
+
+    margin-top: auto; /* Перемещаем блок с регистрацией вниз */
     display: flex;
     gap: rem(15);
     align-items: center;
-    justify-content: flex-end; // Сдвигаем в правую часть
-    margin-left: auto;
+    justify-content: center;
   }
 
   // Медиазапросы для адаптивности
@@ -99,6 +98,7 @@
   }
 
   @include tablet {
+    flex-wrap: wrap;
     padding: rem(18) rem(35); // Средние отступы для планшетов
     .nav {
       font-size: fluid(17, 13); // Средний размер шрифта

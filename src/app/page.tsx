@@ -3,6 +3,9 @@ import "../style/globals.scss";
 import Header from "@/components/heder/Header";
  import Hero from "@/components/hero/Hero";
 import LatestNews from "@/components/news/News";
+import ForumIntro from "@/components/forum/Forum";
+import VideoCarousel from "@/components/guide/Guide";
+import Footer from "@/components/footer/Footer";
 
  export default function Page() {
   return (
@@ -18,6 +21,9 @@ import LatestNews from "@/components/news/News";
 
           {/* Без фона для LatestNews */}
           <LatestNews />
+          <ForumIntro/>
+          <VideoCarousel/>
+          <Footer/>
       </div>
   );
 }

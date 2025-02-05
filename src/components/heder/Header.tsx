@@ -1,4 +1,4 @@
-import scss from '@/components/heder/Header.module.css';
+import scss from '@/components/heder/Header.module.scss';
 import Link from "next/link";
 import Image from "next/image";
 
@@ -18,7 +18,7 @@ export default function Header() {
                 <Link href="/">Главная</Link>
                 <Link href="/new">Новости</Link>
                 <Link href="/forum">Форум</Link>
-                <Link href="/guide">Гайды</Link>
+                <Link href="#guideHeader">Гайды</Link>
             </nav>
             <div className={scss.registr}>
                 <Link href="/auth/register">Регистрация</Link>

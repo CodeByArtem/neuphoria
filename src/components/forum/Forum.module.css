@@ -1,0 +1,98 @@
+.forumIntro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 3.125rem 1.25rem;
+  background: linear-gradient(135deg, #0062ac, #f7a8b8);
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  margin: auto;
+}
+
+.forumContent {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.leftHalf {
+  flex: 1;
+  max-width: 48%;
+  text-align: left;
+}
+
+.forumTitle {
+  font-size: 3rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  background: linear-gradient(45deg, rgba(250, 255, 5, 0.94), #f7a8b8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+  font-family: var(--font-family-innih), serif;
+  line-height: 1.4;
+  text-shadow: 2px 2px 8px rgba(250, 255, 5, 0.94), 0 0 25px rgba(47, 236, 11, 0.83);
+  margin-bottom: 1rem;
+}
+
+.forumDescription {
+  margin-bottom: 1.5rem;
+}
+
+.buttonsContainer {
+  display: flex;
+  gap: 0.625rem;
+}
+
+.forumButton {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  background-color: #0062ac;
+  color: white;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.forumButton:hover {
+  background-color: #00408b;
+}
+
+.forumCard {
+  background-color: #f4f4f4;
+  padding: 1.25rem;
+  border-radius: 8px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+}
+
+@media (width <= 63.99875rem) {
+  .forumTitle {
+    font-size: clamp(1.375rem, 1.1457680251rem + 1.1285266458vw, 2.5rem);
+  }
+  .forumText {
+    font-size: clamp(0.875rem, 0.8240595611rem + 0.2507836991vw, 1.125rem);
+  }
+}
+@media (width <= 47.99875rem) {
+  .forumContainer {
+    padding: 0.625rem;
+  }
+  .forumTitle {
+    font-size: clamp(1.25rem, 1.0462382445rem + 1.0031347962vw, 2.25rem);
+  }
+  .forumText {
+    font-size: clamp(0.75rem, 0.6990595611rem + 0.2507836991vw, 1rem);
+  }
+}
+
+/*# sourceMappingURL=Forum.module.css.map */

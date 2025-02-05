@@ -1,0 +1,97 @@
+@use "../../style/helpers" as *;
+
+.forumIntro {
+  @include flex-center;
+  text-align: center;
+  padding: rem(50) rem(20);
+  background: linear-gradient(135deg, #0062ac, #f7a8b8);
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  margin: auto;
+}
+
+.forumContent {
+  display: flex;
+  justify-content: space-between;
+  gap: rem(20);
+  width: 100%;
+}
+
+.leftHalf {
+  flex: 1;
+  max-width: 48%;
+  text-align: left;
+}
+
+.forumTitle {
+  font-size: 3rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  background: linear-gradient(45deg, rgba(250, 255, 5, 0.94), #f7a8b8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+  font-family: var(--font-family-innih), serif;
+  line-height: 1.4;
+  text-shadow: 2px 2px 8px rgba(250, 255, 5, 0.94), 0 0 25px rgba(47, 236, 11, 0.83);
+  margin-bottom: rem(16);
+}
+
+.forumDescription {
+  margin-bottom: rem(24);
+}
+
+.buttonsContainer {
+  display: flex;
+  gap: rem(10);
+}
+
+.forumButton {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  background-color: #0062ac;
+  color: white;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.forumButton:hover {
+  background-color: #00408b;
+}
+
+.forumCard {
+  background-color: #f4f4f4;
+  padding: rem(20);
+  border-radius: 8px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+}
+
+@include tablet {
+  .forumTitle {
+    @include fluid-text(40, 22);
+  }
+  .forumText {
+    @include fluid-text(18, 14);
+  }
+}
+
+@include mobile {
+  .forumContainer {
+    padding: rem(10);
+  }
+  .forumTitle {
+    @include fluid-text(36, 20);
+  }
+  .forumText {
+    @include fluid-text(16, 12);
+  }
+}

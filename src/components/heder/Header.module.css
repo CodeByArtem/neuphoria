@@ -1,10 +1,9 @@
+@charset "UTF-8";
 .header {
-  padding: 1.25rem 2.5rem;
-  top: 0;
-  z-index: 1000;
-  color: var(--color-blue);
   display: flex;
-  align-items: center;
+  justify-content: space-between; /* Размещаем элементы по обеим сторонам */
+  align-items: center; /* Выравниваем элементы по центру по вертикали */
+  padding: 1.25rem 2.5rem;
 }
 .header .logo {
   display: inline-flex;
@@ -67,11 +66,11 @@
 }
 .header .registr {
   font-size: clamp(0.75rem, 0.6990595611rem + 0.2507836991vw, 1rem);
+  margin-top: auto; /* Перемещаем блок с регистрацией вниз */
   display: flex;
   gap: 0.9375rem;
   align-items: center;
-  justify-content: flex-end;
-  margin-left: auto;
+  justify-content: center;
 }
 @media (width <= 47.99875rem) {
   .header {
@@ -89,6 +88,7 @@
 }
 @media (width <= 63.99875rem) {
   .header {
+    flex-wrap: wrap;
     padding: 1.125rem 2.1875rem;
   }
   .header .nav {
