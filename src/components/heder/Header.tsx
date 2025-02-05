@@ -16,7 +16,7 @@ export default function Header() {
             </div>
             <nav className={scss.nav}>
                 <Link href="/">Главная</Link>
-                <Link href="/news">Новости</Link>
+                <Link href="/new">Новости</Link>
                 <Link href="/forum">Форум</Link>
                 <Link href="/guide">Гайды</Link>
             </nav>
