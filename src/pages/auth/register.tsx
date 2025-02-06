@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';  // Импортируем AxiosError
 import { useRouter } from 'next/router';
 
 function Register() {
@@ -14,7 +14,6 @@ function Register() {
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
-        // Проверка на совпадение паролей
         if (password !== passwordRepeat) {
             setError('Пароли не совпадают');
             return;
@@ -32,16 +31,19 @@ function Register() {
             });
 
             console.log('Registration success:', response.data);
-            // После успешной регистрации можно очистить форму или перенаправить
             setEmail('');
             setPassword('');
             setPasswordRepeat('');
             setUsername('');
-            // Перенаправление или другая логика после успешной регистрации
             await router.push('/auth/login');
-        } catch (err: any) {
-            console.error('Registration error:', err?.response?.data);
-            setError(err?.response?.data?.message || 'Ошибка регистрации');
+        } catch (err: unknown) {  // Используем unknown для более строгой типизации
+            if (axios.isAxiosError(err)) {
+                const axiosError = err as AxiosError;  // Приводим ошибку к типу AxiosError
+                // @ts-ignore
+                setError(axiosError?.response?.data?.message || 'Ошибка регистрации');
+            } else {
+                setError('Ошибка регистрации');
+            }
         } finally {
             setIsSubmitting(false);
         }

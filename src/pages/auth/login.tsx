@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 
 function Login() {
@@ -26,8 +26,17 @@ function Login() {
             }
 
             await router.push('/forum/posts');
-        } catch (err: any) {
-            setError(err?.response?.data?.message || 'Ошибка входа');
+        } catch (err: unknown) {
+            if (axios.isAxiosError(err)) {
+                const axiosError = err as AxiosError;  // Приводим ошибку к типу AxiosError
+
+                // Преобразуем response.data в любой тип, который можно привести к строке
+                // @ts-ignore
+                const errorMessage = axiosError?.response?.data?.message || 'Ошибка входа';
+                setError(errorMessage);
+            } else {
+                setError('Ошибка входа');
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -64,4 +73,3 @@ function Login() {
 }
 
 export default Login;
-
