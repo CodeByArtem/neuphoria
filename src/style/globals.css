@@ -13,7 +13,7 @@
   --container-padding-x: 1rem;
   --transition-duration: 0.2s;
 }
-@media (width <= 90.06125rem) {
+@media (max-width: 1440.98px) {
   :root {
     --container-width: 80rem;
   }

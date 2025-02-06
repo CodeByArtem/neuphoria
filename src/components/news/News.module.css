@@ -68,7 +68,7 @@
   color: #1d4ed8;
 }
 
-@media (width <= 63.99875rem) {
+@media (max-width: 1023.98px) {
   .title {
     font-size: calc(22 + (40 - 22) * (100vw - 320px) / 1280);
   }
@@ -76,7 +76,7 @@
     font-size: calc(14 + (18 - 14) * (100vw - 320px) / 1280);
   }
 }
-@media (width <= 47.99875rem) {
+@media (max-width: 767.98px) {
   .container {
     padding: 1rem;
   }

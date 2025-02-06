@@ -11,8 +11,9 @@ import Footer from "@/components/footer/Footer";
   return (
       <div>
           {/* Фон только для Header и Hero */}
-          <div className="min-h-screen bg-[url('/images/herofon.webp')] bg-cover bg-right -z-10
-  sm:bg-center sm:bg-auto sm:bg-no-repeat sm:min-h-[50vh] md:bg-cover md:bg-center md:min-h-screen">
+          <div className="
+  min-h-screen
+  bg-[url('/images/herofon.webp')] bg-cover bg-right">
 
 
           <Header /> {/* Компонент Header с фоном */}

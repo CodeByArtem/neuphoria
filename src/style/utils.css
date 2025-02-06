@@ -17,13 +17,13 @@
   overflow: hidden !important;
 }
 
-@media (width <= 47.99875rem) {
+@media (max-width: 767.98px) {
   .hidden-mobile {
     display: none !important;
   }
 }
 
-@media (width <= 47.99875rem) {
+@media (min-width: 767.98px) {
   .visually-mobile {
     display: none !important;
   }
