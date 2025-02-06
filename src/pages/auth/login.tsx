@@ -1,15 +1,20 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
-interface LoginResponse {
-    accessToken: string;
+interface RegisterResponse {
+    message: string;
 }
 
+interface ErrorResponse {
+    message: string;
+}
 
-export default function Login() {
+export default function Register() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [passwordRepeat, setPasswordRepeat] = useState<string>("");
+    const [username, setUsername] = useState<string>("");
     const [error, setError] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const router = useRouter();
@@ -19,23 +24,24 @@ export default function Login() {
         setIsSubmitting(true);
         setError("");
 
+        if (password !== passwordRepeat) {
+            setError("Пароли не совпадают");
+            setIsSubmitting(false);
+            return;
+        }
+
         try {
-            const response = await axios.post<LoginResponse>(
-                "https://nestbackgame.onrender.com/api/auth/login",
-                { email, password },
+            const response = await axios.post<RegisterResponse>(
+                "https://nestbackgame.onrender.com/api/auth/register",
+                { email, password, username },
                 { withCredentials: true }
             );
 
-            // После успешного входа сервер отправит accessToken в куки
-            // Сохраняем accessToken в localStorage
-            const token = response.data.accessToken;
-            if (token) {
-                localStorage.setItem("token", token);
-            }
-
-            await router.push("/forum/posts");
-        } catch (err: any) {
-            setError(err?.response?.data?.message || "Ошибка входа");
+            console.log("Registration success:", response.data);
+            await router.push("/auth/login");
+        } catch (err) {
+            const axiosError = err as AxiosError<ErrorResponse>;
+            setError(axiosError?.response?.data?.message || "Ошибка регистрации");
         } finally {
             setIsSubmitting(false);
         }
@@ -54,7 +60,7 @@ export default function Login() {
             </div>
 
             <div>
-                <label>Password</label>
+                <label>Пароль</label>
                 <input
                     type="password"
                     value={password}
@@ -63,9 +69,30 @@ export default function Login() {
                 />
             </div>
 
+            <div>
+                <label>Повторите пароль</label>
+                <input
+                    type="password"
+                    value={passwordRepeat}
+                    onChange={(e) => setPasswordRepeat(e.target.value)}
+                    required
+                />
+            </div>
+
+            <div>
+                <label>Имя пользователя</label>
+                <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                />
+            </div>
+
             {error && <div style={{ color: "red" }}>{error}</div>}
+
             <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Logging in..." : "Войти"}
+                {isSubmitting ? "Регистрация..." : "Зарегистрироваться"}
             </button>
         </form>
     );

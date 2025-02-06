@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 
 interface RegisterResponse {
@@ -35,8 +35,7 @@ function Register() {
             const response = await axios.post<RegisterResponse>('https://nestbackgame.onrender.com/api/auth/register', {
                 email,
                 password,
-                passwordRepeat,
-                username,
+                username, // Убираем passwordRepeat, если он не нужен серверу
             });
 
             console.log('Registration success:', response.data);
@@ -47,9 +46,10 @@ function Register() {
             setUsername('');
             // Перенаправление или другая логика после успешной регистрации
             await router.push('/auth/login');
-        } catch (err: any) {
-            console.error('Registration error:', err?.response?.data);
-            const errorMessage = (err?.response?.data as RegisterError)?.message || 'Ошибка регистрации';
+        } catch (err) {
+            const axiosError = err as AxiosError<RegisterError>;
+            console.error('Registration error:', axiosError?.response?.data);
+            const errorMessage = axiosError?.response?.data?.message || 'Ошибка регистрации';
             setError(errorMessage);
         } finally {
             setIsSubmitting(false);
