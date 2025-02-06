@@ -1,9 +1,16 @@
 import { useState, useEffect } from "react";
-import {apiClient} from "@/services/api";
+import { apiClient } from "@/services/api";
 
+interface Post {
+    id: number;
+    title: string;
+    content: string;
+    author: string;
+    createdAt: string;
+}
 
 export default function usePosts() {
-    const [posts, setPosts] = useState<any[]>([]);
+    const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +22,7 @@ export default function usePosts() {
                 const token = localStorage.getItem("token");
                 if (!token) throw new Error("Токен отсутствует");
 
-                const response = await apiClient.get("/posts", {
+                const response = await apiClient.get<{ posts: Post[] }>("/posts", {
                     headers: { Authorization: ` ${token}` }, // передаем токен с запросом
                     withCredentials: true, // разрешаем отправку cookies
                 });
@@ -23,13 +30,9 @@ export default function usePosts() {
                 if (isMounted) {
                     setPosts(response.data.posts || []);
                 }
-            } catch (err: any) {
+            } catch (err) {
                 if (isMounted) {
-                    if (err.response && err.response.status === 401) {
-                        setError("Неавторизованный запрос. Пожалуйста, войдите в систему.");
-                    } else {
-                        setError("Ошибка загрузки постов");
-                    }
+                    setError("Ошибка загрузки постов");
                 }
             } finally {
                 if (isMounted) {
