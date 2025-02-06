@@ -1,63 +1,59 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import axios, { AxiosError } from 'axios';
-import { useRouter } from 'next/router';
+import { useState, FormEvent } from "react";
+import axios, { AxiosError } from "axios";
+import { useRouter } from "next/router";
 
 interface RegisterResponse {
     message: string;
 }
 
-interface RegisterError {
-    message: string;
+interface ErrorResponse {
+    message?: string;
 }
 
 function Register() {
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [passwordRepeat, setPasswordRepeat] = useState<string>('');
-    const [username, setUsername] = useState<string>('');
-    const [error, setError] = useState<string>('');
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [passwordRepeat, setPasswordRepeat] = useState<string>("");
+    const [username, setUsername] = useState<string>("");
+    const [error, setError] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const router = useRouter();
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // Проверка на совпадение паролей
         if (password !== passwordRepeat) {
-            setError('Пароли не совпадают');
+            setError("Пароли не совпадают");
             return;
         }
 
         setIsSubmitting(true);
-        setError('');
+        setError("");
 
         try {
-            const response = await axios.post<RegisterResponse>('https://nestbackgame.onrender.com/api/auth/register', {
-                email,
-                password,
-                username, // Убираем passwordRepeat, если он не нужен серверу
-            });
+            const response = await axios.post<RegisterResponse>(
+                "https://nestbackgame.onrender.com/api/auth/register",
+                {
+                    email,
+                    password,
+                    passwordRepeat,
+                    username,
+                }
+            );
 
-            console.log('Registration success:', response.data);
-            // После успешной регистрации можно очистить форму или перенаправить
-            setEmail('');
-            setPassword('');
-            setPasswordRepeat('');
-            setUsername('');
-            // Перенаправление или другая логика после успешной регистрации
-            await router.push('/auth/login');
+            console.log("Registration success:", response.data);
+            setEmail("");
+            setPassword("");
+            setPasswordRepeat("");
+            setUsername("");
+            await router.push("/auth/login");
         } catch (err) {
-            const axiosError = err as AxiosError<RegisterError>;
-            console.error('Registration error:', axiosError?.response?.data);
-            const errorMessage = axiosError?.response?.data?.message || 'Ошибка регистрации';
-            setError(errorMessage);
+            const axiosError = err as AxiosError<ErrorResponse>;
+            console.error("Registration error:", axiosError.response?.data);
+            setError(axiosError.response?.data?.message || "Ошибка регистрации");
         } finally {
             setIsSubmitting(false);
         }
-    };
-
-    const handleChange = (e: ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string>>) => {
-        setter(e.target.value);
     };
 
     return (
@@ -67,7 +63,7 @@ function Register() {
                 <input
                     type="email"
                     value={email}
-                    onChange={(e) => handleChange(e, setEmail)}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                 />
             </div>
@@ -77,7 +73,7 @@ function Register() {
                 <input
                     type="password"
                     value={password}
-                    onChange={(e) => handleChange(e, setPassword)}
+                    onChange={(e) => setPassword(e.target.value)}
                     minLength={6}
                     required
                 />
@@ -88,7 +84,7 @@ function Register() {
                 <input
                     type="password"
                     value={passwordRepeat}
-                    onChange={(e) => handleChange(e, setPasswordRepeat)}
+                    onChange={(e) => setPasswordRepeat(e.target.value)}
                     minLength={6}
                     required
                 />
@@ -99,15 +95,15 @@ function Register() {
                 <input
                     type="text"
                     value={username}
-                    onChange={(e) => handleChange(e, setUsername)}
+                    onChange={(e) => setUsername(e.target.value)}
                     required
                 />
             </div>
 
-            {error && <div style={{ color: 'red' }}>{error}</div>}
+            {error && <div style={{ color: "red" }}>{error}</div>}
 
             <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Регистрация...' : 'Зарегистрироваться'}
+                {isSubmitting ? "Регистрация..." : "Зарегистрироваться"}
             </button>
         </form>
     );
