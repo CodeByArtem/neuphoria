@@ -23,16 +23,20 @@ export default function usePosts() {
                 if (!token) throw new Error("Токен отсутствует");
 
                 const response = await apiClient.get<{ posts: Post[] }>("/posts", {
-                    headers: { Authorization: ` ${token}` }, // передаем токен с запросом
-                    withCredentials: true, // разрешаем отправку cookies
+                    headers: { Authorization: ` ${token}` },
+                    withCredentials: true,
                 });
 
                 if (isMounted) {
                     setPosts(response.data.posts || []);
                 }
-            } catch (err) {
+            } catch (err: unknown) {
                 if (isMounted) {
-                    setError("Ошибка загрузки постов");
+                    if (err instanceof Error) {
+                        setError(err.message); // Используем err.message
+                    } else {
+                        setError("Ошибка загрузки постов");
+                    }
                 }
             } finally {
                 if (isMounted) {

@@ -1,16 +1,25 @@
 import { useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 
+// Типизация данных формы
+interface RegisterForm {
+    email: string;
+    password: string;
+    passwordRepeat: string;
+    username: string;
+}
+
 function Register() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [passwordRepeat, setPasswordRepeat] = useState('');
-    const [username, setUsername] = useState('');
-    const [error, setError] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [passwordRepeat, setPasswordRepeat] = useState<string>('');
+    const [username, setUsername] = useState<string>('');
+    const [error, setError] = useState<string>('');
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const router = useRouter();
-    const handleSubmit = async (e: { preventDefault: () => void; }) => {
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         // Проверка на совпадение паролей
@@ -31,16 +40,20 @@ function Register() {
             });
 
             console.log('Registration success:', response.data);
-            // После успешной регистрации можно очистить форму или перенаправить
+            // Очистка формы и перенаправление после успешной регистрации
             setEmail('');
             setPassword('');
             setPasswordRepeat('');
             setUsername('');
-            // Перенаправление или другая логика после успешной регистрации
             await router.push('/auth/login');
-        } catch (err: any) {
-            console.error('Registration error:', err?.response?.data);
-            setError(err?.response?.data?.message || 'Ошибка регистрации');
+        } catch (err: unknown) {
+            // Проверка на ошибку Axios и обработка
+            if (axios.isAxiosError(err)) {
+                setError(err.response?.data?.message || 'Ошибка регистрации');
+            } else {
+                setError('Неизвестная ошибка');
+            }
+            console.error('Registration error:', err);
         } finally {
             setIsSubmitting(false);
         }
@@ -59,29 +72,7 @@ function Register() {
             </div>
 
             <div>
-                <label>Пароль</label>
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    minLength={6}
-                    required
-                />
-            </div>
-
-            <div>
-                <label>Повторите пароль</label>
-                <input
-                    type="password"
-                    value={passwordRepeat}
-                    onChange={(e) => setPasswordRepeat(e.target.value)}
-                    minLength={6}
-                    required
-                />
-            </div>
-
-            <div>
-                <label>Имя пользователя</label>
+                <label>Username</label>
                 <input
                     type="text"
                     value={username}
@@ -90,8 +81,27 @@ function Register() {
                 />
             </div>
 
-            {error && <div style={{ color: 'red' }}>{error}</div>}
+            <div>
+                <label>Password</label>
+                <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+            </div>
 
+            <div>
+                <label>Repeat Password</label>
+                <input
+                    type="password"
+                    value={passwordRepeat}
+                    onChange={(e) => setPasswordRepeat(e.target.value)}
+                    required
+                />
+            </div>
+
+            {error && <div style={{ color: 'red' }}>{error}</div>}
             <button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? 'Регистрация...' : 'Зарегистрироваться'}
             </button>
