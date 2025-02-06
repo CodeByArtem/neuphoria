@@ -1,25 +1,17 @@
 import { useState } from 'react';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { useRouter } from 'next/router';
 
-// Типизация данных формы
-interface RegisterForm {
-    email: string;
-    password: string;
-    passwordRepeat: string;
-    username: string;
-}
-
 function Register() {
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [passwordRepeat, setPasswordRepeat] = useState<string>('');
-    const [username, setUsername] = useState<string>('');
-    const [error, setError] = useState<string>('');
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [passwordRepeat, setPasswordRepeat] = useState('');
+    const [username, setUsername] = useState('');
+    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
         // Проверка на совпадение паролей
@@ -40,20 +32,16 @@ function Register() {
             });
 
             console.log('Registration success:', response.data);
-            // Очистка формы и перенаправление после успешной регистрации
+            // После успешной регистрации можно очистить форму или перенаправить
             setEmail('');
             setPassword('');
             setPasswordRepeat('');
             setUsername('');
+            // Перенаправление или другая логика после успешной регистрации
             await router.push('/auth/login');
-        } catch (err: unknown) {
-            // Проверка на ошибку Axios и обработка
-            if (axios.isAxiosError(err)) {
-                setError(err.response?.data?.message || 'Ошибка регистрации');
-            } else {
-                setError('Неизвестная ошибка');
-            }
-            console.error('Registration error:', err);
+        } catch (err: any) {
+            console.error('Registration error:', err?.response?.data);
+            setError(err?.response?.data?.message || 'Ошибка регистрации');
         } finally {
             setIsSubmitting(false);
         }
