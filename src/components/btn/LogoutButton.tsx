@@ -1,12 +1,8 @@
-import { logout } from "@/services/api"; // Путь может отличаться
+import { logoutUser } from "@/services/api";
 
 const LogoutButton = () => {
     const handleLogout = async () => {
-        try {
-            await logout();
-        } catch (error) {
-            console.error("Ошибка логаута", error);
-        }
+        await logoutUser();
     };
 
     return (

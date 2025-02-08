@@ -1,6 +1,9 @@
+"use client"
+
 import { useState, FormEvent } from "react";
 import axios, { AxiosError } from "axios";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import styles from "./registr.module.scss"
 
 interface RegisterResponse {
     message: string;
@@ -10,7 +13,7 @@ interface ErrorResponse {
     message?: string;
 }
 
-function Register() {
+function Page() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [passwordRepeat, setPasswordRepeat] = useState<string>("");
@@ -46,7 +49,7 @@ function Register() {
             setPassword("");
             setPasswordRepeat("");
             setUsername("");
-            await router.push("/auth/login");
+            await router.push("/");
         } catch (err) {
             const axiosError = err as AxiosError<ErrorResponse>;
             console.error("Registration error:", axiosError.response?.data);
@@ -57,7 +60,7 @@ function Register() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className={styles.registerform} onSubmit={handleSubmit}>
             <div>
                 <label>Email</label>
                 <input
@@ -102,11 +105,11 @@ function Register() {
 
             {error && <div style={{ color: "red" }}>{error}</div>}
 
-            <button type="submit" disabled={isSubmitting}>
+            <button className={styles.buttonRegister} type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Регистрация..." : "Зарегистрироваться"}
             </button>
         </form>
     );
 }
 
-export default Register;
+export default Page;

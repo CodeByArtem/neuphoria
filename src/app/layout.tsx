@@ -1,7 +1,11 @@
 "use client"
+import {Provider} from "react-redux";
+import {store} from "@/store/store";
 import "../style/globals.scss";
-import {Provider} from 'react-redux';
-import {store} from '../store/store';
+import React from "react";
+
+
+
 
 
 
@@ -10,6 +14,7 @@ export default function RootLayout({
                                    }: Readonly<{
     children: React.ReactNode;
 }>) {
+
     return (
         <html lang="en">
         <body>

@@ -32,7 +32,9 @@
       }
     }
   }
-
+.logo {
+  display: inline-block;
+}
   .registr {
     font-size: fluid(16, 12);
     display: flex;
@@ -130,5 +132,59 @@
       position: static;
       transform: translateX(0);
     }
+  }
+}
+.userBlock {
+  display: flex;
+  align-items: center;
+  gap: rem(10);
+  background: rgb(201 201 201 / 86%);
+  padding: rem(8) rem(12);
+  border-radius: rem(8);
+  font-size: fluid(14, 18);
+  font-weight: 600;
+  color: #063ef6;
+  font-family: --font-family-accent;
+  transition: all 0.3s ease;
+
+  .userName {
+    font-weight: bold;
+    color: #063ef6;
+    text-transform: uppercase;
+  }
+
+  .logout {
+    background: #ff6b6b;
+    color: #fff;
+    border: none;
+    padding: rem(6) rem(12);
+    border-radius: rem(8);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: fluid(12, 14);
+
+    &:hover {
+      background: #ff3b3b;
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+// Адаптация для мобильных
+@include mobile {
+  .userBlock {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: rem(6) rem(10);
+  }
+
+  .logout {
+    width: 100%;
+    text-align: center;
   }
 }

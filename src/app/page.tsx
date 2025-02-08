@@ -1,3 +1,4 @@
+"use client"
 import "../style/globals.scss";
 
 import Header from "@/components/heder/Header";
@@ -6,6 +7,7 @@ import LatestNews from "@/components/news/News";
 import ForumIntro from "@/components/forum/Forum";
 import VideoCarousel from "@/components/guide/Guide";
 import Footer from "@/components/footer/Footer";
+import AuthLoader from "@/components/AuthLoader/AuthLoader";
 
  export default function Page() {
   return (
@@ -15,8 +17,9 @@ import Footer from "@/components/footer/Footer";
   min-h-screen
   bg-[url('/images/herofon.webp')] bg-cover bg-right">
 
-
-          <Header /> {/* Компонент Header с фоном */}
+              <AuthLoader />
+          <Header />
+              {/* Компонент Header с фоном */}
               <Hero  />
           </div>
 

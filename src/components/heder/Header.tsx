@@ -1,27 +1,37 @@
-"use client"
-import { useState, useEffect } from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/store/store";
+import { setUser, clearUser } from "@/store/slices/authSlice";
+import { getUserProfile } from "@/services/userApi";
 import scss from "@/components/heder/Header.module.scss";
+import LogoutButton from "@/components/btn/LogoutButton";
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
-
-    const handleBurgerClick = (event: React.MouseEvent) => {
-        event.stopPropagation();
-        setIsOpen(prev => !prev);
-    };
+    const dispatch = useDispatch();
+    const user = useSelector((state: RootState) => state.auth.user);
 
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (isOpen && !(event.target as HTMLElement).closest(`.${scss.nav}`)) {
-                setIsOpen(false);
+        const fetchUser = async () => {
+            try {
+                const userData = await getUserProfile();
+                if (userData?.email) {
+                    dispatch(setUser({ user: userData, token: userData.token || "" }));
+                }
+            } catch (error) {
+                console.error("Ошибка загрузки пользователя:", error);
             }
         };
 
-        document.addEventListener("click", handleClickOutside);
-        return () => document.removeEventListener("click", handleClickOutside);
-    }, [isOpen]);
+        fetchUser();
+    }, [dispatch]);
+
+    const handleLogout = () => {
+        dispatch(clearUser());
+    };
 
     return (
         <header className={scss.header}>
@@ -43,12 +53,21 @@ export default function Header() {
                 <Link href="#guideHeader" onClick={() => setIsOpen(false)}>Гайды</Link>
             </nav>
             <div className={scss.registr}>
-                <Link className={scss.link} href="/auth/register">Регистрация</Link>
-                <Link className={scss.link} href="/auth/login">Логин</Link>
+                {user ? (
+                    <div className={scss.userBlock}>
+                        <span className={scss.userName}>{user.email}</span>
+                        <LogoutButton />
+                    </div>
+                ) : (
+                    <>
+                        <Link className={scss.link} href="/auth/register">Регистрация</Link>
+                        <Link className={scss.link} href="/auth">Логин</Link>
+                    </>
+                )}
             </div>
             <button
                 className={`${scss.burger} ${isOpen ? scss.burgerHidden : ''}`}
-                onClick={handleBurgerClick}
+                onClick={() => setIsOpen(prev => !prev)}
                 aria-label="Открыть меню"
             >
                 <span></span>

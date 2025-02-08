@@ -1,13 +1,16 @@
-import { useRouter } from "next/router";
+"use client"
+
+import { useParams } from "next/navigation";
 
 import "./newsDetail.scss";
-import {news, NewsItem} from "@/services/news/news";
-import Header from "@/components/heder/Header"; // Импортируем файл стилей
+
+import Header from "@/components/heder/Header";
+import {news, NewsItem} from "@/services/news/news"; // Импортируем файл стилей
 
 export default function NewsDetailPage() {
-    const router = useRouter();
-    const { id } = router.query;
-    const item: NewsItem | undefined = news.find((n) => n.id === id);
+    const params = useParams();
+    const newsId = params.id;
+    const item: NewsItem | undefined = news.find((n) => n.id === newsId);
 
     if (!item) return <p className="text-center mt-10">Новость не найдена</p>;
 

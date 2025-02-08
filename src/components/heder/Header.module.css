@@ -29,6 +29,9 @@
 .header .nav > a:active {
   transform: translateY(1px);
 }
+.header .logo {
+  display: inline-block;
+}
 .header .registr {
   font-size: clamp(0.75rem, 0.6990595611rem + 0.2507836991vw, 1rem);
   display: flex;
@@ -115,6 +118,55 @@
     gap: 1.875rem;
     position: static;
     transform: translateX(0);
+  }
+}
+
+.userBlock {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: rgba(201, 201, 201, 0.86);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: clamp(1.125rem, 1.1759404389rem + -0.2507836991vw, 0.875rem);
+  font-weight: 600;
+  color: #063ef6;
+  font-family: --font-family-accent;
+  transition: all 0.3s ease;
+}
+.userBlock .userName {
+  font-weight: bold;
+  color: #063ef6;
+  text-transform: uppercase;
+}
+.userBlock .logout {
+  background: #ff6b6b;
+  color: #fff;
+  border: none;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: clamp(0.875rem, 0.9004702194rem + -0.1253918495vw, 0.75rem);
+}
+.userBlock .logout:hover {
+  background: #ff3b3b;
+  transform: scale(1.05);
+}
+.userBlock .logout:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 767.98px) {
+  .userBlock {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.375rem 0.625rem;
+  }
+  .logout {
+    width: 100%;
+    text-align: center;
   }
 }
 

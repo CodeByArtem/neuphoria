@@ -1,20 +1,31 @@
+"use client"
+import styles from "./login.module.scss";
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
+import { setUser } from "@/store/slices/authSlice";
+
 
 interface LoginResponse {
     accessToken: string;
+    user: {
+        id: string;
+        name: string;
+        email: string;
+    };
 }
 
 interface ErrorResponse {
     message?: string;
 }
 
-export default function Login() {
-    const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
-    const [error, setError] = useState<string>("");
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+export default function LoginPage() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const dispatch = useDispatch();
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -29,12 +40,19 @@ export default function Login() {
                 { withCredentials: true }
             );
 
-            const token = response.data.accessToken;
-            if (token) {
-                localStorage.setItem("token", token);
-            }
+            const { accessToken, user } = response.data;
 
-            await router.push("/forum/posts");
+            if (accessToken) {
+                try {
+                    localStorage.setItem("token", accessToken);
+                    localStorage.setItem("user", JSON.stringify(user));
+                } catch (err) {
+                    console.error("Ошибка записи в localStorage", err);
+                }
+
+                dispatch(setUser({ user, token: accessToken }));
+                await router.push("/");
+            }
         } catch (err) {
             const axiosError = err as AxiosError<ErrorResponse>;
             setError(axiosError.response?.data?.message || "Ошибка входа");
@@ -44,7 +62,7 @@ export default function Login() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className={styles["login-form"]} onSubmit={handleSubmit}>
             <div>
                 <label>Email</label>
                 <input
@@ -67,10 +85,9 @@ export default function Login() {
 
             {error && <div style={{ color: "red" }}>{error}</div>}
 
-            <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Вход..." : "Войти"}
+            <button className={styles.login} type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Вход..." : "Login"}
             </button>
         </form>
     );
 }
-

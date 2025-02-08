@@ -1,0 +1,107 @@
+@use "../../../style/helpers" as *;
+
+.registerform {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 400px;
+  width: 100%;
+  margin: 60px auto;
+  padding: #{rem(28)};
+  background: linear-gradient(135deg, #277fd7, #e9ecef);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+
+  div {
+    width: 100%;
+    margin-bottom: #{rem(18)};
+  }
+
+  label {
+    display: block;
+    font-size: #{rem(15)};
+    color: var(--color-dark);
+    margin-bottom: #{rem(6)};
+    font-weight: 600;
+  }
+
+  input {
+    width: 100%;
+    padding: #{rem(14)};
+    font-size: #{rem(16)};
+    border: 2px solid var(--color-gray-dark);
+    border-radius: 8px;
+    background: var(--color-light);
+    color: var(--color-dark);
+    box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+
+    &:focus {
+      border-color: var(--color-blue);
+      box-shadow: 0 0 12px rgba(var(--color-blue-rgb), 0.6);
+      outline: none;
+    }
+  }
+
+  .error-message {
+    color: var(--color-red);
+    font-size: #{rem(14)};
+    margin-top: #{rem(8)};
+    font-weight: 500;
+  }
+
+  .buttonRegister {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    font-family: var(--font-family-base);
+
+    &:hover {
+      background: linear-gradient(135deg, #0056b3, #003580);
+      box-shadow: 0 4px 15px rgba(0, 91, 187, 0.4);
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 10px rgba(0, 91, 187, 0.3);
+    }
+
+    &:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    // Эффект вспышки
+    &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300%;
+      height: 300%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 70%);
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    &:hover::before {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.2);
+    }
+  }
+}

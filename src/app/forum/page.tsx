@@ -6,7 +6,7 @@ import usePosts from "@/hooks/usePosts";
 import LogoutButton from "@/components/btn/LogoutButton";
 
 
-export default function Posts() {
+export default function Page() {
     const { posts, loading, error } = usePosts();
 
     if (loading) return <p>Loading...</p>;
