@@ -10,24 +10,24 @@ import { deleteUser, getUserProfile, updateUserProfile } from "@/services/userAp
 export default function ProfilePage() {
     const dispatch = useAppDispatch();
     const [formData, setFormData] = useState<{ email: string }>({ email: "" });
-    const [user, setUserState] = useState<{ email: string } | null>(null);
+    const [userState, setUserState] = useState<{ email: string } | null>(null);
     const [loading, setLoading] = useState(true);
     const [deleteLoading, setDeleteLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
 
         const fetchUser = async () => {
             try {
-                setError("");
+                setError(null);
                 const userData = await getUserProfile();
                 if (userData?.email) {
                     dispatch(setUser({ user: userData, token: userData.token || "" }));
                     setFormData({ email: userData.email });
                     setUserState(userData);
                 }
-            } catch (error) {
+            } catch (error: unknown) {
                 setError("Ошибка загрузки профиля");
             } finally {
                 setLoading(false);
@@ -71,7 +71,7 @@ export default function ProfilePage() {
         return <p className={styles.loading}>Загрузка...</p>;
     }
 
-    if (!user) {
+    if (!userState) {
         return <p className={styles.error}>Вы не авторизованы</p>;
     }
 
@@ -80,7 +80,7 @@ export default function ProfilePage() {
             <h2 className={styles.title}>Профиль</h2>
             {error && <div className={styles.error}>{error}</div>}
             <Input name="email" value={formData.email} onChange={handleChange} className={styles.input} disabled />
-            <Button onClick={handleSave} className={styles.button} disabled={loading}>Сохранить</Button>
+            <Button onClick={handleSave} className={styles.button} disabled={loading || formData.email === userState.email}>Сохранить</Button>
             <Button onClick={handleDelete} className={styles.deleteButton} disabled={deleteLoading}>Удалить аккаунт</Button>
         </div>
     );

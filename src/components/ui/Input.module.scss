@@ -1,0 +1,44 @@
+@use "../../style/helpers" as *;
+
+.input {
+  width: 100%;
+  padding: rem(12) rem(16);
+  font-size: fluid(14, 16);
+  font-weight: normal;
+  color: #333;
+  background-color: #f4f4f4;
+  border: 2px solid #ccc;
+  border-radius: rem(8);
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #063ef6;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(6, 62, 246, 0.2);
+  }
+
+  &:disabled {
+    background-color: #e0e0e0;
+    border-color: #d1d1d1;
+    cursor: not-allowed;
+  }
+
+  &::placeholder {
+    color: #aaa;
+    font-style: italic;
+  }
+
+  &:hover {
+    border-color: #063ef6;
+  }
+}
+
+// Адаптация для мобильных
+@include mobile {
+  .input {
+    font-size: fluid(12, 14);
+    padding: rem(10) rem(14);
+  }
+}

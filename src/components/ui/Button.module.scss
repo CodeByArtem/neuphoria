@@ -1,0 +1,40 @@
+@use "../../style/helpers" as *;
+
+.button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: rem(10) rem(20);
+  font-size: fluid(14, 16);
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: #063ef6;
+  color: #fff;
+  border: none;
+  border-radius: rem(8);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.05rem;
+
+  &:hover {
+    background-color: #ff6b6b;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    background-color: #d1d1d1;
+    cursor: not-allowed;
+  }
+}
+
+// Адаптация для мобильных
+@include mobile {
+  .button {
+    padding: rem(8) rem(16);
+    font-size: fluid(12, 14);
+  }
+}

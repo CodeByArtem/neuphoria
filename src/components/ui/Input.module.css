@@ -1,3 +1,39 @@
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: clamp(1rem, 1.0254702194rem + -0.1253918495vw, 0.875rem);
+  font-weight: normal;
+  color: #333;
+  background-color: #f4f4f4;
+  border: 2px solid #ccc;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+.input:focus {
+  border-color: #063ef6;
+  background-color: #fff;
+  box-shadow: 0 0 5px rgba(6, 62, 246, 0.2);
+}
+.input:disabled {
+  background-color: #e0e0e0;
+  border-color: #d1d1d1;
+  cursor: not-allowed;
+}
+.input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+.input:hover {
+  border-color: #063ef6;
+}
 
+@media (max-width: 767.98px) {
+  .input {
+    font-size: clamp(0.875rem, 0.9004702194rem + -0.1253918495vw, 0.75rem);
+    padding: 0.625rem 0.875rem;
+  }
+}
 
 /*# sourceMappingURL=Input.module.css.map */
