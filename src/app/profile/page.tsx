@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { Button, Input } from "@/components/ui";
@@ -13,21 +12,21 @@ export default function ProfilePage() {
     const [userState, setUserState] = useState<{ email: string } | null>(null);
     const [loading, setLoading] = useState(true);
     const [deleteLoading, setDeleteLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);  // Используется для хранения ошибки
 
     useEffect(() => {
         if (typeof window === "undefined") return;
 
         const fetchUser = async () => {
             try {
-                setError(null);
+                setError(null);  // Очищаем ошибку перед загрузкой
                 const userData = await getUserProfile();
                 if (userData?.email) {
                     dispatch(setUser({ user: userData, token: userData.token || "" }));
                     setFormData({ email: userData.email });
                     setUserState(userData);
                 }
-            } catch (error: unknown) {
+            } catch  {
                 setError("Ошибка загрузки профиля");
             } finally {
                 setLoading(false);
@@ -45,7 +44,7 @@ export default function ProfilePage() {
         setLoading(true);
         try {
             await updateUserProfile(formData);
-        } catch (error) {
+        } catch  {
             setError("Ошибка обновления профиля");
         } finally {
             setLoading(false);
@@ -60,7 +59,7 @@ export default function ProfilePage() {
             await deleteUser();
             dispatch(clearUser());
             setUserState(null);
-        } catch (error) {
+        } catch {
             setError("Ошибка удаления аккаунта");
         } finally {
             setDeleteLoading(false);
@@ -78,7 +77,7 @@ export default function ProfilePage() {
     return (
         <div className={styles.profile}>
             <h2 className={styles.title}>Профиль</h2>
-            {error && <div className={styles.error}>{error}</div>}
+            {error && <div className={styles.error}>{error}</div>} {/* Ошибка будет отображаться, если есть */}
             <Input name="email" value={formData.email} onChange={handleChange} className={styles.input} disabled />
             <Button onClick={handleSave} className={styles.button} disabled={loading || formData.email === userState.email}>Сохранить</Button>
             <Button onClick={handleDelete} className={styles.deleteButton} disabled={deleteLoading}>Удалить аккаунт</Button>
