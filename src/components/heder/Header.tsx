@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
@@ -11,6 +11,8 @@ import LogoutButton from "@/components/btn/LogoutButton";
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const dispatch = useDispatch();
     const user = useSelector((state: RootState) => state.auth.user);
 
@@ -22,7 +24,10 @@ export default function Header() {
                     dispatch(setUser({ user: userData, token: userData.token || "" }));
                 }
             } catch (error) {
+                setError("Ошибка загрузки профиля.");
                 console.error("Ошибка загрузки пользователя:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -32,6 +37,31 @@ export default function Header() {
     const handleLogout = () => {
         dispatch(clearUser());
     };
+
+    const toggleMenu = useCallback(() => {
+        setIsOpen(prev => !prev);
+    }, []);
+
+    // Закрытие меню при клике вне области меню
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const menu = document.querySelector(`.${scss.nav}`);
+            const burgerButton = document.querySelector(`.${scss.burger}`);
+
+            // Если клик был вне меню и кнопки бургера
+            if (menu && burgerButton && !menu.contains(event.target as Node) && !burgerButton.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        // Добавляем событие на документ
+        document.addEventListener('click', handleClickOutside);
+
+        // Очищаем событие при размонтировании компонента
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
 
     return (
         <header className={scss.header}>
@@ -53,10 +83,14 @@ export default function Header() {
                 <Link href="#guideHeader" onClick={() => setIsOpen(false)}>Гайды</Link>
             </nav>
             <div className={scss.registr}>
-                {user ? (
+                {loading ? (
+                    <span>Загрузка...</span>
+                ) : error ? (
+                    <span className={scss.error}>{error}</span>
+                ) : user ? (
                     <div className={scss.userBlock}>
                         <span className={scss.userName}>{user.email}</span>
-                        <LogoutButton />
+                        <LogoutButton onClick={handleLogout} />
                     </div>
                 ) : (
                     <>
@@ -67,7 +101,7 @@ export default function Header() {
             </div>
             <button
                 className={`${scss.burger} ${isOpen ? scss.burgerHidden : ''}`}
-                onClick={() => setIsOpen(prev => !prev)}
+                onClick={toggleMenu}
                 aria-label="Открыть меню"
             >
                 <span></span>

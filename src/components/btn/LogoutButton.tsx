@@ -1,6 +1,12 @@
 import { logoutUser } from "@/services/api";
+import React from "react";
 
-const LogoutButton = () => {
+interface LogoutButtonProps {
+    onClick: () => void;
+}
+
+
+const LogoutButton: React.FC<LogoutButtonProps> = () => {
     const handleLogout = async () => {
         await logoutUser();
     };

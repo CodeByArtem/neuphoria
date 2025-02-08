@@ -10,7 +10,7 @@ import { deleteUser, getUserProfile, updateUserProfile } from "@/services/userAp
 export default function ProfilePage() {
     const dispatch = useAppDispatch();
     const [formData, setFormData] = useState<{ email: string }>({ email: "" });
-    const [user, setUserState] = useState(null);
+    const [user, setUserState] = useState<{ email: string } | null>(null);
     const [loading, setLoading] = useState(true);
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [error, setError] = useState("");
@@ -19,18 +19,16 @@ export default function ProfilePage() {
         if (typeof window === "undefined") return;
 
         const fetchUser = async () => {
-            setError("");
             try {
+                setError("");
                 const userData = await getUserProfile();
                 if (userData?.email) {
                     dispatch(setUser({ user: userData, token: userData.token || "" }));
                     setFormData({ email: userData.email });
                     setUserState(userData);
-                } else {
-                    console.warn("Пользователь не найден");
                 }
             } catch (error) {
-                console.error("Ошибка загрузки профиля:", error);
+                setError("Ошибка загрузки профиля");
             } finally {
                 setLoading(false);
             }
@@ -45,29 +43,27 @@ export default function ProfilePage() {
 
     const handleSave = async () => {
         setLoading(true);
-        setError("");
         try {
             await updateUserProfile(formData);
         } catch (error) {
-            setError("Ошибка обновления профиля. Попробуйте позже.");
+            setError("Ошибка обновления профиля");
         } finally {
             setLoading(false);
         }
     };
 
     const handleDelete = async () => {
-        if (window.confirm("Вы уверены, что хотите удалить аккаунт?")) {
-            setDeleteLoading(true);
-            setError("");
-            try {
-                await deleteUser();
-                dispatch(clearUser());
-                setUserState(null);
-            } catch (error) {
-                setError("Ошибка удаления аккаунта. Попробуйте позже.");
-            } finally {
-                setDeleteLoading(false);
-            }
+        if (!window.confirm("Вы уверены, что хотите удалить аккаунт?")) return;
+
+        setDeleteLoading(true);
+        try {
+            await deleteUser();
+            dispatch(clearUser());
+            setUserState(null);
+        } catch (error) {
+            setError("Ошибка удаления аккаунта");
+        } finally {
+            setDeleteLoading(false);
         }
     };
 
@@ -84,7 +80,7 @@ export default function ProfilePage() {
             <h2 className={styles.title}>Профиль</h2>
             {error && <div className={styles.error}>{error}</div>}
             <Input name="email" value={formData.email} onChange={handleChange} className={styles.input} disabled />
-            <Button onClick={handleSave} className={styles.button} disabled={!formData.email || loading}>Сохранить</Button>
+            <Button onClick={handleSave} className={styles.button} disabled={loading}>Сохранить</Button>
             <Button onClick={handleDelete} className={styles.deleteButton} disabled={deleteLoading}>Удалить аккаунт</Button>
         </div>
     );

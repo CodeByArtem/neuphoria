@@ -7,7 +7,7 @@ import LatestNews from "@/components/news/News";
 import ForumIntro from "@/components/forum/Forum";
 import VideoCarousel from "@/components/guide/Guide";
 import Footer from "@/components/footer/Footer";
-import AuthLoader from "@/components/AuthLoader/AuthLoader";
+
 
  export default function Page() {
   return (
@@ -17,7 +17,7 @@ import AuthLoader from "@/components/AuthLoader/AuthLoader";
   min-h-screen
   bg-[url('/images/herofon.webp')] bg-cover bg-right">
 
-              <AuthLoader />
+
           <Header />
               {/* Компонент Header с фоном */}
               <Hero  />
