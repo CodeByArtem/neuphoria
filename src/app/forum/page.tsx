@@ -8,7 +8,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { clearUser } from "@/store/slices/authSlice";
 
 export default function Page() {
-    const { posts, loading, error } = usePosts();
+    const { posts, loading } = usePosts();
     const dispatch = useAppDispatch();
     const token = localStorage.getItem("token");
     const handleLogout = () => {
