@@ -14,7 +14,7 @@ const LatestNews = () => {
             <ul className={styles.newsList}>
                 {latestNews.map((item) => (
                     <li key={item.id} className={styles.newsItem}>
-                        <Link href={`/src/app/new/${item.id}`} className={styles.link}>
+                        <Link href={`/new/${item.id}`} className={styles.link}>
                             {item.title}
                         </Link>
                         <p className={styles.date}>{item.date}</p>

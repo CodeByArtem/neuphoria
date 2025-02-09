@@ -12,8 +12,8 @@ export default function ForumIntro() {
                         Здесь можно обсуждать любые темы, задавать вопросы и находить единомышленников.
                     </p>
                     <div className={styles.buttonsContainer}>
-                        <Link href="/login" className={styles.forumButton}>Войти</Link>
-                        <Link href="/register" className={styles.forumButton}>Регистрация</Link>
+
+                        <Link href="/forum" className={styles.forumButton}>Зайти на Форум</Link>
                     </div>
                 </div>
                 <div className={styles.rightHalf}>

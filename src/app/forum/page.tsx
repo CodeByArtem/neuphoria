@@ -10,27 +10,32 @@ import { clearUser } from "@/store/slices/authSlice";
 export default function Page() {
     const { posts, loading, error } = usePosts();
     const dispatch = useAppDispatch();
-
+    const token = localStorage.getItem("token");
     const handleLogout = () => {
         dispatch(clearUser()); // Очистка пользователя из стора
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
+    if (loading) return <p>Загрузка...</p>;
+
+    if (!token) return <p>Вы не авторизованы</p>;
 
     return (
         <Provider store={store}>
             <div>
-                <h1>Forum</h1>
-                <LogoutButton onClick={handleLogout} />
-                <ul>
-                    {posts.map((post) => (
-                        <li key={post.id}>
-                            <h3>{post.title}</h3>
-                            <p>{post.content}</p>
-                        </li>
-                    ))}
-                </ul>
+                <h3>Forum</h3>
+                <LogoutButton />
+                {posts.length > 0 ? (
+                    <ul>
+                        {posts.map((post) => (
+                            <li key={post.id}>
+                                <h3>{post.title}</h3>
+                                <p>{post.content}</p>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>Постов пока нет</p>
+                )}
             </div>
         </Provider>
     );

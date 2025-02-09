@@ -21,7 +21,7 @@ export default function usePosts() {
         const fetchPosts = async () => {
             try {
                 const token = localStorage.getItem("token");
-                if (!token) throw new Error("Токен отсутствует");
+                if (!token) return; // Просто ничего не делаем
 
                 const response = await apiClient.get<{ posts: Post[] }>("/posts", {
                     headers: { Authorization: ` ${token}` },
