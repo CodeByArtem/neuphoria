@@ -23,7 +23,7 @@ export default function Page() {
         <Provider store={store}>
             <div>
                 <h3>Forum</h3>
-                <LogoutButton />
+                <LogoutButton onClick={handleLogout} />
                 {posts.length > 0 ? (
                     <ul>
                         {posts.map((post) => (
