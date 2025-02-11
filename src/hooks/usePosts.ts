@@ -1,57 +1,42 @@
-"use client"
-import { useState, useEffect } from "react";
-import { apiClient } from "@/services/api";
-
-interface Post {
-    id: number;
-    title: string;
-    content: string;
-    author: string;
-    createdAt: string;
-}
+"use client";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";  // Импортируем хуки для работы с Redux
+import { setPosts, setLoading, setError } from "@/store/slices/postsSlice";  // Импортируем экшены
+import apiClient from "@/services/userApi";
 
 export default function usePosts() {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const dispatch = useAppDispatch();
+    const { posts, loading, error } = useAppSelector((state) => state.posts);  // Получаем данные из Redux
 
     useEffect(() => {
-        let isMounted = true;
-
         const fetchPosts = async () => {
+            const token = localStorage.getItem("token");
+            console.log("Token from localStorage:", token); // Логируем токен
+            if (!token) {
+                dispatch(setError("Token is missing"));
+                return;
+            }
+
+            dispatch(setLoading(true)); // Устанавливаем состояние загрузки в true
+
             try {
-                const token = localStorage.getItem("token");
-                if (!token) return; // Просто ничего не делаем
-
-                const response = await apiClient.get<{ posts: Post[] }>("/posts", {
-                    headers: { Authorization: ` ${token}` },
-                    withCredentials: true,
+                const response = await apiClient.get("/posts", {
+                    headers: {
+                        "Authorization": ` ${token}`,
+                        "Content-Type": "application/json",
+                    },
                 });
-
-                if (isMounted) {
-                    setPosts(response.data.posts || []);
-                }
-            } catch (err: unknown) {
-                if (isMounted) {
-                    if (err instanceof Error) {
-                        setError(err.message); // Используем err.message
-                    } else {
-                        setError("Ошибка загрузки постов");
-                    }
-                }
+                dispatch(setPosts(response.data.posts || []));  // Сохраняем посты в Redux
+            } catch (err) {
+                dispatch(setError("Ошибка загрузки постов"));
+                console.error("Error fetching posts:", err);  // Логируем ошибку
             } finally {
-                if (isMounted) {
-                    setLoading(false);
-                }
+                dispatch(setLoading(false));  // Устанавливаем состояние загрузки в false
             }
         };
 
         fetchPosts();
-
-        return () => {
-            isMounted = false;
-        };
-    }, []);
+    }, [dispatch]);
 
     return { posts, loading, error };
 }

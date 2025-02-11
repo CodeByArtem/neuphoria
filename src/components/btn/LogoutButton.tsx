@@ -1,14 +1,19 @@
 import { logoutUser } from "@/services/api";
 import React from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store/store"; // Импортируем dispatch
 
 interface LogoutButtonProps {
     onClick: () => void;
 }
 
+const LogoutButton: React.FC<LogoutButtonProps> = ({ onClick }) => {
+    const dispatch = useDispatch<AppDispatch>();
 
-const LogoutButton: React.FC<LogoutButtonProps> = () => {
     const handleLogout = async () => {
-        await logoutUser();
+        // Выполняем логаут через запрос и dispatch для очистки данных
+        await logoutUser(dispatch);
+        onClick(); // Вызовем onClick, переданный как пропс
     };
 
     return (

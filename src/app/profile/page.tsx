@@ -1,10 +1,10 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { Button, Input } from "@/components/ui";
 import { setUser, clearUser } from "@/store/slices/authSlice";
 import styles from "@/app/profile/Profile.module.scss";
-import { deleteUser, getUserProfile, updateUserProfile } from "@/services/userApi";
+import { deleteUser, getUserProfile, updateUserProfile } from "@/services/api";
 
 export default function ProfilePage() {
     const dispatch = useAppDispatch();
@@ -12,21 +12,32 @@ export default function ProfilePage() {
     const [userState, setUserState] = useState<{ email: string } | null>(null);
     const [loading, setLoading] = useState(true);
     const [deleteLoading, setDeleteLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);  // Используется для хранения ошибки
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
 
         const fetchUser = async () => {
             try {
-                setError(null);  // Очищаем ошибку перед загрузкой
+                const token = localStorage.getItem("token");
+
+                if (!token) {
+                    setError("Токен отсутствует");
+                    return;
+                }
+
+                setError(null);  // Сбрасываем ошибку перед загрузкой
                 const userData = await getUserProfile();
+
                 if (userData?.email) {
-                    dispatch(setUser({ user: userData, token: userData.token || "" }));
+                    dispatch(setUser({ user: userData, token }));
                     setFormData({ email: userData.email });
                     setUserState(userData);
+                } else {
+                    setError("Не удалось загрузить профиль");
                 }
-            } catch  {
+            } catch (e) {
+                console.error("Ошибка при загрузке профиля:", e);
                 setError("Ошибка загрузки профиля");
             } finally {
                 setLoading(false);
@@ -44,7 +55,9 @@ export default function ProfilePage() {
         setLoading(true);
         try {
             await updateUserProfile(formData);
-        } catch  {
+            setUserState({ email: formData.email });
+        } catch (e) {
+            console.error("Ошибка обновления профиля:", e);
             setError("Ошибка обновления профиля");
         } finally {
             setLoading(false);
@@ -59,7 +72,8 @@ export default function ProfilePage() {
             await deleteUser();
             dispatch(clearUser());
             setUserState(null);
-        } catch {
+        } catch (e) {
+            console.error("Ошибка удаления аккаунта:", e);
             setError("Ошибка удаления аккаунта");
         } finally {
             setDeleteLoading(false);
@@ -77,10 +91,28 @@ export default function ProfilePage() {
     return (
         <div className={styles.profile}>
             <h2 className={styles.title}>Профиль</h2>
-            {error && <div className={styles.error}>{error}</div>} {/* Ошибка будет отображаться, если есть */}
-            <Input name="email" value={formData.email} onChange={handleChange} className={styles.input} disabled />
-            <Button onClick={handleSave} className={styles.button} disabled={loading || formData.email === userState.email}>Сохранить</Button>
-            <Button onClick={handleDelete} className={styles.deleteButton} disabled={deleteLoading}>Удалить аккаунт</Button>
+            {error && <div className={styles.error}>{error}</div>}
+            <Input
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className={styles.input}
+                disabled
+            />
+            <Button
+                onClick={handleSave}
+                className={styles.button}
+                disabled={loading || formData.email === userState.email}
+            >
+                Сохранить
+            </Button>
+            <Button
+                onClick={handleDelete}
+                className={styles.deleteButton}
+                disabled={deleteLoading}
+            >
+                Удалить аккаунт
+            </Button>
         </div>
     );
 }

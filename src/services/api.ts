@@ -1,65 +1,68 @@
-import axios from "axios";
+// Функция для выполнения запросов с токеном
+import apiClient from "@/services/userApi";
+import {AppDispatch} from "@/store/store";
 import {clearUser} from "@/store/slices/authSlice";
-import {store} from "@/store/store";
 
-export const apiClient = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-    headers: {
-        "Content-Type": "application/json",
-        "Authorization": typeof window !== "undefined" && localStorage.getItem("token")
-            ? `Bearer ${localStorage.getItem("token")}`
-            : ""
-    },
-    withCredentials: true,
-});
 
-// Интерцептор для обработки 401 ошибок
-apiClient.interceptors.response.use(
-    response => response,
-    async (error) => {
-        const originalRequest = error.config;
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
-            try {
-                const refreshResponse = await apiClient.post("/auth/refresh-tokens", {}, { withCredentials: true });
-                const newToken = refreshResponse.data.accessToken;
-                if (newToken) {
-                    if (typeof window !== "undefined") {
-                        localStorage.setItem("token", newToken);
-                    }
-                    originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
-                    return apiClient(originalRequest);
-                }
-            } catch (refreshError) {
-                console.error("Ошибка обновления токена", refreshError);
-                if (typeof window !== "undefined") {
-                    localStorage.removeItem("token");
-                    document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-
-                }
-            }
-        }
-        return Promise.reject(error);
+const requestWithAuth = async (method: string, url: string, data?: any) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("Токен отсутствует");
     }
-);
-export const logoutUser = async () => {
+
     try {
-        await apiClient.post("/auth/logout");
+        const response = await apiClient.request({
+            method,
+            url,
+            data,
+            headers: {
+                Authorization: ` ${token}`,
+            },
+        });
+        return response.data;
     } catch (error) {
-        console.error("Ошибка логаута", error);
-    } finally {
-        handleLogout();
+        console.error(`${method} запрос на ${url} не удался`, error);
+        throw error; // Прокидываем ошибку дальше
     }
 };
 
-// Очистка Redux, localStorage и редирект
-const handleLogout = () => {
-    if (typeof window !== "undefined") {
+// Получение профиля пользователя
+export const getUserProfile = async () => {
+    console.log("Профиль пользователя:", getUserProfile);
+    return await requestWithAuth("get", "/user/me");
+};
+
+// Обновление профиля пользователя
+export const updateUserProfile = async (data: { email: string }) => {
+    return await requestWithAuth("put", "/user", data);
+};
+
+// Удаление пользователя
+export const deleteUser = async () => {
+    const userProfile = await getUserProfile();
+    const userId = userProfile?.id;
+
+    if (!userId) {
+        throw new Error("Ошибка: ID пользователя не найден.");
+    }
+
+    return await requestWithAuth("delete", `/user/${userId}`);
+};
+
+export const logoutUser = async (dispatch: AppDispatch) => {
+    try {
+        // Отправляем запрос на сервер для выхода
+        await apiClient.post("/auth/logout"); // Предполагаем, что у тебя есть такой эндпоинт
+
+        // Очистка состояния пользователя в Redux
+        dispatch(clearUser());
+
+        // Удаление токена из localStorage
         localStorage.removeItem("token");
-        document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-        store.dispatch(clearUser()); // Очищаем Redux
-        window.location.href = "/auth"; // Редирект на страницу входа
+
+        // Перенаправление на страницу логина
+        // Этот код нужно будет вызвать в компоненте, так как useRouter только в компонентах
+    } catch (error) {
+        console.error("Ошибка выхода:", error);
     }
 };
-
-export default apiClient;

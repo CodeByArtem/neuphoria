@@ -1,19 +1,13 @@
-"use client"
+"use client";
 import styles from "./login.module.scss";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
-import { setUser } from "@/store/slices/authSlice";
 
 
 interface LoginResponse {
     accessToken: string;
-    user: {
-        id: string;
-        name: string;
-        email: string;
-    };
 }
 
 interface ErrorResponse {
@@ -23,38 +17,43 @@ interface ErrorResponse {
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const dispatch = useDispatch();
+
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
-        setError("");
+        setError(null);
 
         try {
-            const response = await axios.post<LoginResponse>(
+            console.log("Attempting login with:", { email, password });
+
+            const { data } = await axios.post<LoginResponse>(
                 "https://nestbackgame.onrender.com/api/auth/login",
                 { email, password },
                 { withCredentials: true }
             );
 
-            const { accessToken, user } = response.data;
+            console.log("Login successful, server response:", data);
+
+            const { accessToken } = data;
 
             if (accessToken) {
                 try {
                     localStorage.setItem("token", accessToken);
-                    localStorage.setItem("user", JSON.stringify(user));
+                    console.log("Token saved to localStorage");
                 } catch (err) {
-                    console.error("Ошибка записи в localStorage", err);
+                    console.error("Error saving token to localStorage:", err);
                 }
 
-                dispatch(setUser({ user, token: accessToken }));
-                await router.push("/");
+                // Перенаправляем на другую страницу, запрос профиля можно сделать на другой странице
+                await router.push("/"); // Перенаправление на другую страницу
             }
         } catch (err) {
             const axiosError = err as AxiosError<ErrorResponse>;
+            console.error("Login error:", axiosError);
             setError(axiosError.response?.data?.message || "Ошибка входа");
         } finally {
             setIsSubmitting(false);

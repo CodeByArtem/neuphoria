@@ -1,59 +1,73 @@
-import apiClient from "./api";
 import axios from "axios";
+import { store } from "@/store/store";
 
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import { clearUser } from "@/store/slices/authSlice";
+import {refreshToken} from "@/store/authActions";
 
-if (!API_URL) {
-    throw new Error("NEXT_PUBLIC_API_BASE_URL не задан");
-}
+// Проверка, выполняется ли код на клиенте
+const isClient = typeof window !== "undefined";
 
-// Получение профиля пользователя
-export const getUserProfile = async () => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-        return null; // Если нет токена, просто не делаем запрос
+// Функция для получения токена из localStorage
+const getToken = () => {
+    if (isClient) {
+        return localStorage.getItem("token");
     }
-    const response = await axios.get(`${API_URL}/user/me`, {
-        headers: {
-            Authorization: ` ${token}`, // ✅ Исправлено
-        },
-    });
-
-    return response.data;
+    return null; // Если выполняется на сервере, возвращаем null
 };
 
-// Обновление профиля пользователя
-export const updateUserProfile = async (data: { email: string }) => {
-    const token = localStorage.getItem("token");
+// Создаем axios клиент
+export const apiClient = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": getToken() ? `Bearer ${getToken()}` : "", // Добавляем токен только если он существует
+    },
+    withCredentials: true,
+});
 
-    if (!token) {
-        throw new Error("Токен отсутствует");
+// Интерцептор для запроса - добавляем токен в заголовки только если токен есть
+apiClient.interceptors.request.use(
+    async (config) => {
+        const token = getToken();
+        if (token) {
+            config.headers["Authorization"] = `Bearer ${token}`;
+        } else {
+            return Promise.reject(new Error("Токен отсутствует"));
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
+// Интерцептор для ответа - обработка ошибки 401 и обновление токена
+apiClient.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+
+        // Если ошибка 401 (не авторизован) и запрос еще не повторялся
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+
+            const token = getToken();
+            if (!token) {
+                return Promise.reject(error); // Если нет токена, отклоняем ошибку
+            }
+
+            // Попытка обновить токен
+            try {
+                const newToken = await store.dispatch(refreshToken());
+
+                if (newToken) {
+                    originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+                    return apiClient(originalRequest); // Повторяем запрос с новым токеном
+                }
+            } catch (err) {
+                return Promise.reject(error); // Ошибка при обновлении токена
+            }
+        }
+        return Promise.reject(error);
     }
+);
 
-    const response = await apiClient.put("/user", data, {
-        headers: {
-            Authorization: ` ${token}`, // ✅ Исправлено
-        },
-    });
-
-    return response.data;
-};
-
-// Удаление пользователя
-export const deleteUser = async () => {
-    const userProfile = await getUserProfile(); // Получаем профиль
-    const userId = userProfile.id; // Берем ID пользователя
-
-    if (!userId) {
-        throw new Error("Ошибка: ID пользователя не найден.");
-    }
-
-    const response = await apiClient.delete(`/user/${userId}`, {
-        headers: {
-            Authorization: ` ${localStorage.getItem("token")}`, // ✅ Добавлен заголовок
-        },
-    });
-
-    return response.data;
-};
+export default apiClient;
