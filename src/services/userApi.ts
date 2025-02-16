@@ -20,7 +20,7 @@ export const apiClient = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
     headers: {
         "Content-Type": "application/json",
-        "Authorization": getToken() ? `Bearer ${getToken()}` : "", // Добавляем токен только если он существует
+        "Authorization": getToken() ? ` ${getToken()}` : "", // Добавляем токен только если он существует
     },
     withCredentials: true,
 });
@@ -30,7 +30,7 @@ apiClient.interceptors.request.use(
     async (config) => {
         const token = getToken();
         if (token) {
-            config.headers["Authorization"] = `Bearer ${token}`;
+            config.headers["Authorization"] = ` ${token}`;
         } else {
             return Promise.reject(new Error("Токен отсутствует"));
         }
@@ -59,7 +59,7 @@ apiClient.interceptors.response.use(
                 const newToken = await store.dispatch(refreshToken());
 
                 if (newToken) {
-                    originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+                    originalRequest.headers["Authorization"] = ` ${newToken}`;
                     return apiClient(originalRequest); // Повторяем запрос с новым токеном
                 }
             } catch (err) {

@@ -2,13 +2,17 @@
 import apiClient from "@/services/userApi";
 import {AppDispatch} from "@/store/store";
 import {clearUser} from "@/store/slices/authSlice";
-
+import Cookies from "js-cookie";
 
 const requestWithAuth = async (method: string, url: string, data?: any) => {
-    const token = localStorage.getItem("token");
+    const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+
+    // Проверяем наличие токена
     if (!token) {
-        throw new Error("Токен отсутствует");
+        console.warn("Токен отсутствует, запрос не может быть выполнен.");
+        return { error: "Токен отсутствует. Авторизация необходима." }; // Возвращаем ошибку, чтобы можно было обработать на уровне компонента
     }
+
 
     try {
         const response = await apiClient.request({
@@ -28,7 +32,7 @@ const requestWithAuth = async (method: string, url: string, data?: any) => {
 
 // Получение профиля пользователя
 export const getUserProfile = async () => {
-    console.log("Профиль пользователя:", getUserProfile);
+
     return await requestWithAuth("get", "/user/me");
 };
 
@@ -51,18 +55,16 @@ export const deleteUser = async () => {
 
 export const logoutUser = async (dispatch: AppDispatch) => {
     try {
-        // Отправляем запрос на сервер для выхода
-        await apiClient.post("/auth/logout"); // Предполагаем, что у тебя есть такой эндпоинт
+        // Отправить запрос на логаут, если есть такой эндпоинт
+        await apiClient.post("/auth/logout");
 
-        // Очистка состояния пользователя в Redux
+        // Удалить токен и refresh токен из куки
+        Cookies.remove("token");
+        Cookies.remove("refresh_token");
+
+        // Очистка данных пользователя из Redux
         dispatch(clearUser());
-
-        // Удаление токена из localStorage
-        localStorage.removeItem("token");
-
-        // Перенаправление на страницу логина
-        // Этот код нужно будет вызвать в компоненте, так как useRouter только в компонентах
-    } catch (error) {
-        console.error("Ошибка выхода:", error);
+    } catch (err) {
+        console.error("Ошибка при логауте:", err);
     }
 };
