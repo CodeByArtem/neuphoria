@@ -1,60 +1,67 @@
 // Функция для выполнения запросов с токеном
 import apiClient from "@/services/userApi";
-import {AppDispatch} from "@/store/store";
-import {clearUser} from "@/store/slices/authSlice";
+import { AppDispatch } from "@/store/store";
+import { clearUser } from "@/store/slices/authSlice";
 import Cookies from "js-cookie";
 
-const requestWithAuth = async (method: string, url: string, data?: any) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+interface UserProfile {
+    id: string;
+    email: string;
+    name: string;
+}
+
+const requestWithAuth = async <T = unknown, R = unknown>(
+    method: string,
+    url: string,
+    data?: T
+): Promise<R> => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
     if (!token) {
-        // Если токен отсутствует, возвращаем ошибку и не выполняем запрос
         console.warn("Токен отсутствует, запрос не может быть выполнен.");
-        return {error: "Токен отсутствует. Авторизация необходима."};
+        return Promise.reject(new Error("Токен отсутствует. Авторизация необходима."));
     }
+
     try {
-        const response = await apiClient.request({
+        const response = await apiClient.request<R>({
             method,
             url,
             data,
             headers: {
-                Authorization: `${token}`, // Добавляем Bearer
+                Authorization: `${token}`,
+                "Content-Type": "application/json",
             },
             withCredentials: true,
         });
+
         return response.data;
     } catch (error) {
         console.error(`${method} запрос на ${url} не удался`, error);
-        throw error;
+        return Promise.reject(error);
     }
 };
 
-export const getUserProfile = async () => {
-    // Проверяем наличие токена
-    const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+export const getUserProfile = async (): Promise<UserProfile | null> => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
     if (!token) {
         console.warn("Токен отсутствует, запрос не может быть выполнен.");
-        return null; // Если токен отсутствует, возвращаем null, запрос не выполняем
+        return null;
     }
 
     try {
-        return await requestWithAuth("get", "/user/me");
+        return await requestWithAuth<undefined, UserProfile>("get", "/user/me");
     } catch (error) {
         console.error("Ошибка получения профиля:", error);
         return null;
     }
 };
 
-
-
-// Обновление профиля пользователя
 export const updateUserProfile = async (data: { email: string }) => {
-    return await requestWithAuth("put", "/user", data);
+    return await requestWithAuth<typeof data, UserProfile>("put", "/user", data);
 };
 
-// Удаление пользователя
-export const deleteUser = async () => {
+export const deleteUser = async (): Promise<void> => {
     const userProfile = await getUserProfile();
     const userId = userProfile?.id;
 
@@ -62,21 +69,18 @@ export const deleteUser = async () => {
         throw new Error("Ошибка: ID пользователя не найден.");
     }
 
-    return await requestWithAuth("delete", `/user/${userId}`);
+    await requestWithAuth<undefined, void>("delete", `/user/${userId}`);
 };
 
 export const logoutUser = async (dispatch: AppDispatch) => {
     try {
-        // Отправить запрос на логаут, если есть такой эндпоинт
         await apiClient.post("/auth/logout");
 
-        // Удалить токен и refresh токен из куки
-        Cookies.remove("token", { path: "/" }); // Убедитесь, что путь верный
+        Cookies.remove("token", { path: "/" });
         Cookies.remove("refresh_token", { path: "/" });
 
-        // Очистка данных пользователя из Redux
         dispatch(clearUser());
-    } catch (err) {
-        console.error("Ошибка при логауте:", err);
+    } catch (error) {
+        console.error("Ошибка при логауте:", error);
     }
 };

@@ -1,5 +1,4 @@
-"use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
     setPosts,
@@ -20,20 +19,12 @@ export default function usePosts() {
 
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-    useEffect(() => {
-        if (!isAuthenticated) {
-            handleError("Token is missing");
-            return;
-        }
-        fetchPosts();
-    }, [dispatch, isAuthenticated]);
-
-    const handleError = (message: string) => {
+    const handleError = useCallback((message: string) => {
         dispatch(setError(message));
         setCustomError(message);
-    };
+    }, [dispatch]);
 
-    const fetchPosts = async () => {
+    const fetchPosts = useCallback(async () => {
         if (!token) return;
         dispatch(setLoading(true));
 
@@ -52,7 +43,15 @@ export default function usePosts() {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    }, [dispatch, handleError, token]);
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            handleError("Token is missing");
+            return;
+        }
+        fetchPosts();
+    }, [isAuthenticated, fetchPosts, handleError]);
 
     const createPost = async (title: string, content: string) => {
         if (!token) return;
@@ -79,12 +78,11 @@ export default function usePosts() {
             const errorMsg = "Сервер не вернул созданный пост.";
             handleError(errorMsg);
             return { error: errorMsg };
-        } catch (err: any) {
+        } catch (err: unknown) {
             let errorMsg = "Неизвестная ошибка";
 
             if (axios.isAxiosError(err) && err.response) {
                 const { status, data } = err.response;
-             
 
                 if (status === 400 && data?.message?.includes("Please wait")) {
                     errorMsg = data.message;
@@ -94,10 +92,9 @@ export default function usePosts() {
             }
 
             handleError(errorMsg);
-            return { error: errorMsg }; // Возвращаем ошибку
+            return { error: errorMsg };
         }
     };
-
 
     const handleDeletePost = async (postId: string) => {
         if (!token) return;
@@ -111,9 +108,8 @@ export default function usePosts() {
             });
             dispatch(deletePost(postId));
             setCustomError("");
-        } catch (err) {
+        } catch {
             handleError("Ошибка удаления поста");
-
         }
     };
 
@@ -138,9 +134,8 @@ export default function usePosts() {
             } else {
                 handleError("Не удалось получить обновленный пост.");
             }
-        } catch (err) {
+        } catch {
             handleError("Ошибка обновления поста");
-
         }
     };
 

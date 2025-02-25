@@ -1,7 +1,7 @@
 import axios from "axios";
 import { store } from "@/store/store";
 
-import { clearUser } from "@/store/slices/authSlice";
+
 import {refreshToken} from "@/store/authActions";
 
 // Проверка, выполняется ли код на клиенте
@@ -62,7 +62,7 @@ apiClient.interceptors.response.use(
                     originalRequest.headers["Authorization"] = ` ${newToken}`;
                     return apiClient(originalRequest); // Повторяем запрос с новым токеном
                 }
-            } catch (err) {
+            } catch (error) {
                 return Promise.reject(error); // Ошибка при обновлении токена
             }
         }
