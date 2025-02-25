@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
@@ -43,12 +43,13 @@ export default function Header() {
     useEffect(() => {
         const token = localStorage.getItem("token");
 
-        if (token) {
+        // Проверяем токен и если нет пользователя, делаем запрос
+        if (token && !user) {
             fetchUser();
         } else {
-            console.log("Токен не найден.");
+            console.log("Токен не найден или пользователь уже авторизован.");
         }
-    }, [dispatch]);
+    }, [dispatch, user]); // Добавляем зависимость от user
 
     // Обработчик выхода
     const handleLogout = () => {

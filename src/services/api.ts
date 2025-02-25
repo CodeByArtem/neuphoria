@@ -7,34 +7,46 @@ import Cookies from "js-cookie";
 const requestWithAuth = async (method: string, url: string, data?: any) => {
     const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
 
-    // Проверяем наличие токена
     if (!token) {
+        // Если токен отсутствует, возвращаем ошибку и не выполняем запрос
         console.warn("Токен отсутствует, запрос не может быть выполнен.");
-        return { error: "Токен отсутствует. Авторизация необходима." }; // Возвращаем ошибку, чтобы можно было обработать на уровне компонента
+        return {error: "Токен отсутствует. Авторизация необходима."};
     }
-
-
     try {
         const response = await apiClient.request({
             method,
             url,
             data,
             headers: {
-                Authorization: ` ${token}`,
+                Authorization: `${token}`, // Добавляем Bearer
             },
+            withCredentials: true,
         });
         return response.data;
     } catch (error) {
         console.error(`${method} запрос на ${url} не удался`, error);
-        throw error; // Прокидываем ошибку дальше
+        throw error;
     }
 };
 
-// Получение профиля пользователя
 export const getUserProfile = async () => {
+    // Проверяем наличие токена
+    const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
 
-    return await requestWithAuth("get", "/user/me");
+    if (!token) {
+        console.warn("Токен отсутствует, запрос не может быть выполнен.");
+        return null; // Если токен отсутствует, возвращаем null, запрос не выполняем
+    }
+
+    try {
+        return await requestWithAuth("get", "/user/me");
+    } catch (error) {
+        console.error("Ошибка получения профиля:", error);
+        return null;
+    }
 };
+
+
 
 // Обновление профиля пользователя
 export const updateUserProfile = async (data: { email: string }) => {
@@ -59,8 +71,8 @@ export const logoutUser = async (dispatch: AppDispatch) => {
         await apiClient.post("/auth/logout");
 
         // Удалить токен и refresh токен из куки
-        Cookies.remove("token");
-        Cookies.remove("refresh_token");
+        Cookies.remove("token", { path: "/" }); // Убедитесь, что путь верный
+        Cookies.remove("refresh_token", { path: "/" });
 
         // Очистка данных пользователя из Redux
         dispatch(clearUser());

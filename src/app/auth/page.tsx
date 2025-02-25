@@ -5,13 +5,12 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
 
-
 interface LoginResponse {
     accessToken: string;
 }
 
 interface ErrorResponse {
-    message?: string;
+    message?: string | string[];  // Массив или строка
 }
 
 export default function LoginPage() {
@@ -48,17 +47,28 @@ export default function LoginPage() {
                     console.error("Error saving token to localStorage:", err);
                 }
 
-                // Перенаправляем на другую страницу, запрос профиля можно сделать на другой странице
-                await router.push("/"); // Перенаправление на другую страницу
+                // Перенаправляем на другую страницу
+                await router.push("/"); // Перенаправление на главную страницу
             }
         } catch (err) {
             const axiosError = err as AxiosError<ErrorResponse>;
-            console.error("Login error:", axiosError);
-            setError(axiosError.response?.data?.message || "Ошибка входа");
+
+            // Проверяем, если есть ошибка, показываем сообщение пользователю
+            if (axiosError.response) {
+                const errorMessage = Array.isArray(axiosError.response?.data?.message)
+                    ? axiosError.response?.data?.message[0]
+                    : axiosError.response?.data?.message;
+
+                // Показываем ошибку на странице
+                setError(errorMessage || "Ошибка входа");
+            } else {
+                setError("Неизвестная ошибка, попробуйте позже");
+            }
         } finally {
             setIsSubmitting(false);
         }
     };
+
 
     return (
         <form className={styles["login-form"]} onSubmit={handleSubmit}>
@@ -82,7 +92,7 @@ export default function LoginPage() {
                 />
             </div>
 
-            {error && <div style={{ color: "red" }}>{error}</div>}
+            {error && <div style={{ color: "red" }}>{error}</div>}  {/* Вывод ошибки */}
 
             <button className={styles.login} type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Вход..." : "Login"}
