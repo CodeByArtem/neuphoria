@@ -43,13 +43,12 @@ export default function Header() {
     useEffect(() => {
         const token = localStorage.getItem("token");
 
-        // Проверяем токен и если нет пользователя, делаем запрос
         if (token && !user) {
             fetchUser();
         } else {
             console.log("Токен не найден или пользователь уже авторизован.");
         }
-    }, [dispatch, user]); // Добавляем зависимость от user
+    }, [dispatch, user, fetchUser]); // добавлен fetchUser
 
     // Обработчик выхода
     const handleLogout = () => {

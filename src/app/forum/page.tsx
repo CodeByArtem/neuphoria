@@ -8,6 +8,16 @@ import { getUserProfile } from "@/services/api";
 import { useRouter } from "next/navigation";
 import LogoutButton from "@/components/btn/LogoutButton";
 
+interface Post {
+    id: string;
+    title: string;
+    content: string;
+}
+
+
+
+
+
 export default function Page() {
     const dispatch = useAppDispatch();
     const { posts, loading, createPost, handleDeletePost, handleUpdatePost } = usePosts();
@@ -73,7 +83,7 @@ export default function Page() {
         }
     };
 
-    const handleEditPost = (post: any) => {
+    const handleEditPost = (post: Post) => {
         setEditPost({ id: post.id, title: post.title, content: post.content });
         setPostError(null);
     };
