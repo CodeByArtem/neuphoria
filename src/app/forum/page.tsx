@@ -7,6 +7,7 @@ import usePosts from "@/hooks/usePosts";
 import { getUserProfile } from "@/services/api";
 import { useRouter } from "next/navigation";
 import LogoutButton from "@/components/btn/LogoutButton";
+import Link from "next/link";
 
 interface Post {
     id: string;
@@ -227,8 +228,10 @@ export default function Page() {
                                 </>
                             ) : (
                                 <>
-                                    <h4 className="text-2xl font-semibold text-gray-800">
-                                        {post?.title || 'Без названия'}
+                                    <h4 className="text-2xl font-semibold text-gray-800 cursor-pointer">
+                                        <Link href={`/posts/${post.id}`}>
+                                            {post?.title || 'Без названия'}
+                                        </Link>
                                     </h4>
                                     <p className="text-gray-600 mt-2">{post?.content || 'Нет содержимого'}</p>
                                     <p className="text-sm text-gray-500 mt-4">

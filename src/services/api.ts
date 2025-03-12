@@ -45,7 +45,7 @@ export const getUserProfile = async (): Promise<UserProfile | null> => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
     if (!token) {
-        console.warn("Токен отсутствует, запрос не может быть выполнен.");
+        console.log("getUserProfile: Нет токена");
         return null;
     }
 
