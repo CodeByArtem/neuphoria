@@ -1,8 +1,9 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import axios from "axios";
+
 import Comments from "@/components/commentar/Comments";
+import apiClient from "@/services/userApi";
 
 // Описываем тип поста
 interface Post {
@@ -24,7 +25,7 @@ export default function PostPage() {
 
         const fetchPost = async () => {
             try {
-                const response = await axios.get<Post>(`/api/posts/${id}`);
+                const response =  await apiClient.get(`/posts/${id}`);
                 setPost(response.data);
             } catch (err) {
                 setError("Ошибка загрузки поста");
