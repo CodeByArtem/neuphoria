@@ -18,12 +18,11 @@ export default function Header() {
     const [error, setError] = useState<string | null>(null);
 
     // Функция для загрузки профиля пользователя
-    const fetchUser = async () => {
+    const fetchUser = useCallback(async () => {
         setLoading(true);
         try {
-            // Загружаем данные пользователя
             const userData = await getUserProfile();
-            console.log("Полученные данные пользователя:", userData); // Логируем данные
+            console.log("Полученные данные пользователя:", userData);
 
             if (userData?.email) {
                 const token = localStorage.getItem("token") as string;
@@ -37,9 +36,9 @@ export default function Header() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [dispatch]);
 
-    // Вызов функции при загрузке компонента
+// Вызов функции при загрузке компонента
     useEffect(() => {
         const token = localStorage.getItem("token");
 
@@ -48,7 +47,8 @@ export default function Header() {
         } else {
             console.log("Токен не найден или пользователь уже авторизован.");
         }
-    }, [dispatch, user, fetchUser]); // добавлен fetchUser
+    }, [dispatch, user, fetchUser]);
+
 
     // Обработчик выхода
     const handleLogout = () => {

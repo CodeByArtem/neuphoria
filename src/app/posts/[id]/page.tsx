@@ -27,7 +27,7 @@ export default function PostPage() {
             try {
                 const response =  await apiClient.get(`/posts/${id}`);
                 setPost(response.data);
-            } catch (err) {
+            } catch  {
                 setError("Ошибка загрузки поста");
             } finally {
                 setLoading(false);
