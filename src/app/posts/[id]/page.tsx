@@ -3,7 +3,9 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import Comments from "@/components/commentar/Comments";
+
 import apiClient from "@/services/userApi";
+import LikeButton from "@/components/like/LikeButton";
 
 // Описываем тип поста
 interface Post {
@@ -44,6 +46,7 @@ export default function PostPage() {
         <div>
             <h1 className="text-2xl font-bold">{post?.title}</h1>
             <p>{post?.content}</p>
+            <LikeButton postId={id as string} />
             <Comments postId={id as string} />
         </div>
     );
