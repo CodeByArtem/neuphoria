@@ -1,16 +1,19 @@
 import { useSelector, useDispatch } from "react-redux";
 import { toggleLike } from "@/store/slices/likeSlice";
-import { AppDispatch } from "@/store/store";
+import { AppDispatch, RootState } from "@/store/store";
 
-export function LikeButton({ postId }: { postId: string }) {
+interface LikeButtonProps {
+    postId: string;
+}
+
+export function LikeButton({ postId }: LikeButtonProps) {
     const dispatch = useDispatch<AppDispatch>();
-    const likedPosts = useSelector((state: any) => state.likes.likedPosts);
-    const likeCount = useSelector((state: any) => state.likes.likeCounts[postId] || 0);
+    const likedPosts = useSelector((state: RootState) => state.likes.likedPosts);
+    const likeCount = useSelector((state: RootState) => state.likes.likeCounts[postId] || 0);
 
     const isLiked = likedPosts.includes(postId);
 
     const handleLike = () => {
-        console.log("like", postId);
         dispatch(toggleLike({ postId }));
     };
 
