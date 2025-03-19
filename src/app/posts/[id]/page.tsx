@@ -1,13 +1,14 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 import Comments from "@/components/commentar/Comments";
-
 import apiClient from "@/services/userApi";
-import LikeButton from "@/components/like/LikeButton";
+import { LikeButton } from "@/components/like/LikeButton";
+import { fetchLikes } from "@/store/slices/likeSlice";
+import {AppDispatch} from "@/store/store";
 
-// Описываем тип поста
 interface Post {
     id: string;
     title: string;
@@ -16,6 +17,8 @@ interface Post {
 
 export default function PostPage() {
     const params = useParams();
+    const dispatch = useDispatch<AppDispatch>();
+
     const id = typeof params?.id === "string" ? params.id : Array.isArray(params?.id) ? params.id[0] : undefined;
 
     const [post, setPost] = useState<Post | null>(null);
@@ -27,9 +30,12 @@ export default function PostPage() {
 
         const fetchPost = async () => {
             try {
-                const response =  await apiClient.get(`/posts/${id}`);
+                const response = await apiClient.get(`/posts/${id}`);
                 setPost(response.data);
-            } catch  {
+
+                // Загружаем актуальные лайки при загрузке страницы
+                dispatch(fetchLikes());
+            } catch {
                 setError("Ошибка загрузки поста");
             } finally {
                 setLoading(false);
@@ -37,7 +43,7 @@ export default function PostPage() {
         };
 
         fetchPost();
-    }, [id]);
+    }, [id, dispatch]);
 
     if (loading) return <p>Загрузка...</p>;
     if (error) return <p>{error}</p>;
